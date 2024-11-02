@@ -1,0 +1,45 @@
+body {
+  --md-sys-color-primary: #006b56;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #7ef8d5;
+  --md-sys-color-on-primary-container: #002018;
+  --md-sys-color-secondary: #4b635b;
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-secondary-container: #cee9dd;
+  --md-sys-color-on-secondary-container: #072019;
+  --md-sys-color-tertiary: #416276;
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-tertiary-container: #c4e7ff;
+  --md-sys-color-on-tertiary-container: #001e2c;
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-error-container: #ffdad6;
+  --md-sys-color-on-error-container: #410002;
+  --md-sys-color-background: #fbfdfa;
+  --md-sys-color-on-background: #191c1b;
+  --md-sys-color-surface: #fbfdfa;
+  --md-sys-color-on-surface: #191c1b;
+  --md-sys-color-surface-variant: #dbe5df;
+  --md-sys-color-on-surface-variant: #3f4945;
+  --md-sys-color-outline: #6f7975;
+  --md-sys-color-outline-variant: #bfc9c3;
+  --md-sys-color-shadow: #000000;
+  --md-sys-color-scrim: #000000;
+  --md-sys-color-inverse-surface: #2e312f;
+  --md-sys-color-inverse-on-surface: #eff1ee;
+  --md-sys-color-inverse-primary: #5fdbb9;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}

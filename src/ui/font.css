@@ -1,0 +1,41 @@
+*:not(md-icon) {
+  font-family: var(--font-sarasaMono);
+}
+
+@font-face {
+  font-family: "Material Symbols Outlined";
+  font-style: normal;
+  src: url("./assets/MaterialSymbolsOutlined.woff2") format("woff");
+}
+
+@font-face {
+  font-family: "SarasaMonoSC";
+  src: url("./assets/SarasaMonoSC-Regular.ttf");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "SarasaMonoSC";
+  src: url("./assets/SarasaMonoSC-Bold.ttf");
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "SarasaMonoSC";
+  src: url("./assets/SarasaMonoSC-Light.ttf");
+  font-weight: 300;
+}
+
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px; /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+}

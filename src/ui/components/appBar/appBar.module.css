@@ -1,0 +1,50 @@
+.header {
+  grid-area: header;
+  font-family: "SarasaMonoSC";
+  font-weight: 400;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  row-gap: 8px;
+  background-color: var(--md-sys-color-primary-container);
+
+  /* 可拖拽区域 */
+  -webkit-app-region: drag;
+}
+
+.operations-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.start-container {
+  /* 容器区域需要点击交互, 设置为不可拖拽 */
+  -webkit-app-region: no-drag;
+}
+
+.tail-container {
+  /* 容器区域需要点击交互, 设置为不可拖拽 */
+  -webkit-app-region: no-drag;
+  margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  align-self: center;
+  flex-wrap: nowrap;
+}
+
+.window-icon {
+  width: 32px;
+  height: 32px;
+  font-size: 24px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-left: 8px;
+
+  /* 标题区域需要点击交互, 设置为不可拖拽 */
+  -webkit-app-region: no-drag;
+  width: fit-content;
+}

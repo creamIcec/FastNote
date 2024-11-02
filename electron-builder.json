@@ -1,0 +1,15 @@
+{
+  "appId": "com.iriseplos.fastnote",
+  "files": ["dist-electron", "dist-react"],
+  "icon": "./desktop.png",
+  "mac": {
+    "target": "dmg"
+  },
+  "linux": {
+    "target": "AppImage",
+    "category": "Utility"
+  },
+  "win": {
+    "target": ["portable", "msi"]
+  }
+}

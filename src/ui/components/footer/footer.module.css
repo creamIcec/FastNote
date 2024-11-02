@@ -1,0 +1,17 @@
+.footer {
+  grid-area: footer;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  background-color: var(--md-sys-color-primary-container);
+}
+.tail-container {
+  margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  column-gap: 4px;
+  padding: 4px;
+}
