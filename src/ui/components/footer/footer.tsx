@@ -1,11 +1,17 @@
-import { MdFab, MdIcon } from "react-material-web";
-import styles from "./footer.module.css";
-import { useShallow } from "zustand/shallow";
-import { useTypingState } from "../../states/note-saved-state";
 import { useCallback } from "react";
 import toast from "react-hot-toast";
+import { MdFab, MdIcon } from "react-material-web";
+import { useShallow } from "zustand/shallow";
+import { copyCurrentNoteContent, createNote } from "../../actions/api";
 import { useContent, useTitle } from "../../states/content-state";
-import { getFormattedDateTime } from "../../utils/datetime";
+import { useTypingState } from "../../states/note-saved-state";
+import {
+  getCurrentHour,
+  getCurrentMinute,
+  getCurrentSecond,
+  getFormattedDateTime,
+} from "../../utils/datetime";
+import styles from "./footer.module.css";
 
 export default function Footer() {
   const [isSaved] = useTypingState(useShallow((state) => [state.saveState]));
@@ -15,13 +21,14 @@ export default function Footer() {
   const [setTitle] = useTitle(useShallow((state) => [state.setTitle]));
 
   const handleCopy = useCallback(() => {
-    navigator.clipboard.writeText(content).then(
+    copyCurrentNoteContent(content).then(
       function () {
         toast.success((t) => <div className={styles.toast}>复制成功!</div>, {
           duration: 2000,
           style: {
             borderRadius: "24px",
             background: "var(--md-sys-color-tertiary-container, #333)",
+            color: "var(--text-color)",
           },
         });
       },
@@ -35,6 +42,7 @@ export default function Footer() {
             style: {
               borderRadius: "24px",
               background: "var(--md-sys-color-error-container, #333)",
+              color: "var(--text-color)",
             },
           }
         );
@@ -44,7 +52,7 @@ export default function Footer() {
 
   const handleCreateNote = useCallback(async () => {
     const name = getFormattedDateTime();
-    const result = await window.noteService.createNote(name);
+    const result = await createNote(name);
     if (result === true) {
       setTitle(name);
       setContent("");
@@ -56,8 +64,10 @@ export default function Footer() {
       case "saved":
         return (
           <div className={styles["indicator"]}>
-            <MdIcon>check_circle</MdIcon>
-            <span className={styles["success-text"]}>保存成功</span>
+            <MdIcon className={styles["success-text"]}>check_circle</MdIcon>
+            <span
+              className={styles["success-text"]}
+            >{`上次自动保存于: ${getCurrentHour()}:${getCurrentMinute()}:${getCurrentSecond()}`}</span>
           </div>
         );
       case "pending":
@@ -65,7 +75,7 @@ export default function Footer() {
       case "error":
         return (
           <div className={styles["indicator"]}>
-            <MdIcon>error</MdIcon>
+            <MdIcon className={styles["error-text"]}>error</MdIcon>
             <span className={styles["error-text"]}>保存失败，出错了</span>
           </div>
         );

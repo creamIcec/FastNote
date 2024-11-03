@@ -1,10 +1,13 @@
 //接口列表
 
+import { getCurrentHour, getCurrentMinute, getDelay } from "../utils/datetime";
+
 // 获取当前笔记的名称
-export function getCurrentNoteName() {
-  return "Title";
+export async function readRecentTitle() {
+  return await window.noteService.readRecentTitle();
 }
 
+//保存当前编辑的笔记名称
 export async function saveRecentNoteName(name: string) {
   return await window.noteService.saveRecentTitle(name);
 }
@@ -14,14 +17,10 @@ export async function renameNote(noteName: string, newName: string) {
   return await window.noteService.renameNote(noteName, newName);
 }
 
-// 保存笔记名称
-export function saveNoteName(noteId: string, name: string) {}
-
 // 加载笔记列表
-export function readNoteList() {}
-
-// 保存笔记列表
-export function saveNoteList() {}
+export async function readNoteList() {
+  return await window.noteService.readNoteList();
+}
 
 // 保存笔记
 export async function saveNote(noteName: string, content: string) {
@@ -39,20 +38,28 @@ export async function readNote(noteName: string) {
 }
 
 // 复制当前笔记内容到剪贴板
-export function copyCurrentNoteContent() {
-  return "Content";
+export function copyCurrentNoteContent(content: string) {
+  return navigator.clipboard.writeText(content);
 }
 
 // 创建新笔记
-export function createNote() {
-  return "noteid";
+export async function createNote(name: string) {
+  return await window.noteService.createNote(name);
 }
 
 // 安排一段时间后的提醒
-export function scheduleNotification(delay: number, message: string) {}
-
-// 发送提醒通知
-export function sendNotification(message: string) {}
+export async function scheduleNotification(
+  target: string,
+  title: string,
+  content: string
+) {
+  const delay = getDelay(`${getCurrentHour()}:${getCurrentMinute()}`, target); //获取毫秒为单位的时间差
+  return await window.notificationService.scheduleNotification(
+    delay,
+    title,
+    content
+  );
+}
 
 // 最小化窗口
 export function minimizeWindow() {

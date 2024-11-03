@@ -23,3 +23,8 @@ electron.contextBridge.exposeInMainWorld("noteService", {
     electron.ipcRenderer.invoke("note:saveRecentTitle", name),
   readNoteList: () => electron.ipcRenderer.invoke("notelist:read"),
 });
+
+electron.contextBridge.exposeInMainWorld("notificationService", {
+  scheduleNotification: (delay: number, name: string, content: string) =>
+    electron.ipcRenderer.invoke("notification:set", delay, name, content),
+});

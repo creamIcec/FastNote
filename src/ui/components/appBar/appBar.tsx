@@ -1,10 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import {
+  MdCheckbox,
+  MdDialog,
+  MdElevatedCard,
+  MdFilledButton,
+  MdFilledCard,
+  MdFilledTextField,
   MdIcon,
   MdIconButton,
+  MdOutlinedButton,
   MdOutlinedTextField,
   MdOutlinedTextFieldElement,
+  MdTextButton,
 } from "react-material-web";
 import { useShallow } from "zustand/shallow";
 import {
@@ -13,17 +21,22 @@ import {
   minimizeWindow,
   renameNote,
   saveToExternalFile,
+  scheduleNotification,
 } from "../../actions/api";
-import { useTitle } from "../../states/content-state";
+import { useContent, useTitle } from "../../states/content-state";
 import { useSidebarState } from "../../states/sidebar-state";
 import styles from "./appBar.module.css";
 import { useThemeState } from "../../states/theme-state";
 import { changeTheme } from "../../utils/theme";
+import { TimePicker } from "react-time-picker";
+import { getCurrentHour, getCurrentMinute } from "../../utils/datetime";
 
 export default function AppBar({ title }: { title: string }) {
-  const [isOpen, setIsOpen] = useSidebarState(
+  const [isSidebarOpen, setIsSidebarOpen] = useSidebarState(
     useShallow((state) => [state.isOpen, state.setIsOpen])
   );
+
+  const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
 
   const [setTitle] = useTitle(useShallow((state) => [state.setTitle]));
 
@@ -34,8 +47,14 @@ export default function AppBar({ title }: { title: string }) {
     useShallow((state) => [state.theme, state.setTheme, state.getNextTheme])
   );
 
+  const [content] = useContent(useShallow((state) => [state.content]));
+
+  const [value, onTimeChange] = useState(
+    `${getCurrentHour()}:${getCurrentMinute()}`
+  );
+
   const handleClick = () => {
-    setIsOpen(!isOpen);
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
   const handleMinimize = () => {
@@ -151,8 +170,76 @@ export default function AppBar({ title }: { title: string }) {
     changeTheme(newTheme);
   };
 
+  const handleToggleTimePicker = () => {
+    setIsTimePickerOpen(!isTimePickerOpen);
+  };
+
+  const handleScheduleNotification = async () => {
+    if (!timePickerRef.current || !contentUseRef.current) {
+      return;
+    }
+    const targetTime = (timePickerRef!.current as HTMLInputElement).value;
+    console.log(targetTime);
+    const useContentAsNotification = (
+      contentUseRef!.current as HTMLInputElement
+    ).checked;
+    await scheduleNotification(
+      targetTime,
+      `来自笔记: ${title}`,
+      useContentAsNotification ? content : "你有新的提醒"
+    );
+    setIsTimePickerOpen(false);
+  };
+
+  const cancelScheduleNotification = () => {
+    setIsTimePickerOpen(false);
+  };
+
+  const timePickerRef = useRef(null);
+  const contentUseRef = useRef(null);
+
   return (
     <header className={styles.header}>
+      {isTimePickerOpen && (
+        <div className={styles["time-picker-container"]}>
+          <MdElevatedCard className={styles.dialog}>
+            <div className={styles["time-picker-title"]}>
+              <h3>设置一个提醒时刻</h3>
+              <p>到达这个时刻之后, 应用将会通知提醒你哦</p>
+            </div>
+            <div className={styles["time-picker-input-wrapper"]}>
+              <input
+                aria-label="Time"
+                type="time"
+                className={styles["time-picker"]}
+                ref={timePickerRef}
+              />
+              <label>
+                <MdCheckbox
+                  touch-target="wrapper"
+                  checked
+                  ref={contentUseRef}
+                ></MdCheckbox>
+                以笔记内容作为提醒内容
+              </label>
+            </div>
+            <div className={styles["time-picker-action-container"]}>
+              <MdOutlinedButton
+                className={styles["time-picker-action-button"]}
+                onClick={cancelScheduleNotification}
+              >
+                取消
+              </MdOutlinedButton>
+              <MdFilledButton
+                className={styles["time-picker-action-button"]}
+                onClick={handleScheduleNotification}
+              >
+                确定
+              </MdFilledButton>
+            </div>
+          </MdElevatedCard>
+        </div>
+      )}
       <div className={styles["operations-container"]}>
         <div className={styles["start-container"]}>
           <MdIconButton onClick={handleClick}>
@@ -161,7 +248,7 @@ export default function AppBar({ title }: { title: string }) {
           <MdIconButton onClick={handleSaveExternal}>
             <MdIcon>save</MdIcon>
           </MdIconButton>
-          <MdIconButton>
+          <MdIconButton onClick={handleToggleTimePicker}>
             <MdIcon>alarm</MdIcon>
           </MdIconButton>
           <MdIconButton onClick={handleThemeChange}>

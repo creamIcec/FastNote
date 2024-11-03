@@ -1,8 +1,9 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, Notification } from "electron";
 import path from "path";
 import { getPreloadPath, isDebug, isDev } from "./util.js";
 import {
   registerDataEventHandlers,
+  registerNotificationEventHandlers,
   registerWindowCloseEventHandler,
   registryWindowEventHandlers,
 } from "./events/event-handlers.js";
@@ -13,6 +14,7 @@ import {
 import { initializeTray, registerTrayClickEvent } from "./native/tray.js";
 import { showWindow, toggleWindow } from "./actions/window-actions.js";
 import { NoteService } from "./io/note-service.js";
+import { NotificationService } from "./io/notification-service.js";
 
 app.on("ready", () => {
   const mainWindow = new BrowserWindow({
@@ -32,6 +34,8 @@ app.on("ready", () => {
 
   //创建笔记服务对象
   const noteService = new NoteService(debug);
+  //创建通知服务对象
+  const notificationService = new NotificationService();
 
   if (debug) {
     mainWindow.webContents.openDevTools();
@@ -48,6 +52,9 @@ app.on("ready", () => {
 
   //注册所有数据处理事件监听
   registerDataEventHandlers(noteService);
+
+  //注册通知处理事件监听
+  registerNotificationEventHandlers(notificationService);
 
   //注册全局快捷键
   registerGlobalBringUpWindowShortCut(() => {

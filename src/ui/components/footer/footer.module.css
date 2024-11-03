@@ -28,10 +28,11 @@
   flex-wrap: nowrap;
   column-gap: 4px;
   align-items: center;
+  font-size: 16px;
 }
 
 .success-text {
-  color: var(--md-sys-color-inverse-surface);
+  color: var(--text-color);
 }
 
 .error-text {

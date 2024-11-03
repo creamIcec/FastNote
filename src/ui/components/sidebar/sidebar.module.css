@@ -14,10 +14,12 @@
   width: 100%;
   align-items: center;
   padding: 4px;
+  color: var(--text-color);
 }
 
 .note-list {
   --md-list-container-color: transparent;
+  width: 100%;
 }
 
 .note-list-container {

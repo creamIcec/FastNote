@@ -11,6 +11,7 @@ import {
 } from "react-material-web";
 import { useEffect, useState } from "react";
 import { useTitle } from "../../states/content-state";
+import { readNoteList } from "../../actions/api";
 
 export default function SideBar() {
   const [isOpen, setIsOpen] = useSidebarState(
@@ -26,7 +27,7 @@ export default function SideBar() {
   useEffect(() => {
     console.log("刷新笔记列表");
     const fetchNoteList = async () => {
-      const list = await window.noteService.readNoteList();
+      const list = await readNoteList();
       setNoteList(list);
     };
     fetchNoteList();
@@ -45,6 +46,7 @@ export default function SideBar() {
             <MdIconButton onClick={handleClose}>
               <MdIcon>close</MdIcon>
             </MdIconButton>
+            <p>笔记列表</p>
           </div>
           <div className={styles["note-list-container"]}>
             <MdList className={styles["note-list"]}>

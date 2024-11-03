@@ -1,5 +1,9 @@
 import { BrowserWindow, ipcMain } from "electron";
 import { NoteService } from "../io/note-service.js";
+import {
+  NotificationItem,
+  NotificationService,
+} from "../io/notification-service.js";
 
 export function registryWindowEventHandlers(window: BrowserWindow) {
   ipcMain.handle("minimize", () => {
@@ -118,5 +122,15 @@ export function registerDataEventHandlers(noteService: NoteService) {
       console.log("读取笔记列表时遇到错误:", e);
       return e;
     }
+  });
+}
+
+//通知事件处理器
+export function registerNotificationEventHandlers(
+  notificationService: NotificationService
+) {
+  ipcMain.handle("notification:set", async (event, delay, name, content?) => {
+    console.log(`设置的通知延迟: ${delay}`);
+    notificationService.enqueue(new NotificationItem(content, name, delay));
   });
 }

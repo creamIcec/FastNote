@@ -15,4 +15,12 @@ interface Window {
     saveRecentTitle: (name: string) => Promise<string> | Promise<undefined>;
     readNoteList: () => Promise<[]>;
   };
+
+  notificationService: {
+    scheduleNotification: (
+      delay: number,
+      name: string,
+      content: string
+    ) => Promise<boolean>;
+  };
 }

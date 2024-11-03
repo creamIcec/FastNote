@@ -38,7 +38,7 @@ function App() {
     console.log(`标题发生改变:${title}`);
     if (title) {
       const saveRecentTitle = async () => {
-        const result = await saveRecentNoteName(title);
+        const _ = await saveRecentNoteName(title);
       };
       saveRecentTitle();
     }

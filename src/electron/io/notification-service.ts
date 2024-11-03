@@ -1,25 +1,61 @@
+import { nativeSendNotification } from "../native/notification.js";
+
 //通知类
 export class NotificationItem {
   private _title: string;
-  private _source: string;
+  private _content: string;
+  private _delay: number;
   public get title() {
     return this._title;
   }
-  public get source() {
-    return this._source;
+  public get content() {
+    return this._content;
   }
-  public constructor(title: string, source: string) {
+  public get delay() {
+    return this._delay;
+  }
+  public constructor(title: string, source: string, delay: number) {
     this._title = title;
-    this._source = source;
+    this._content = source;
+    this._delay = delay;
   }
 }
 
 export class NotificationService {
-  public constructor() {}
+  private notificationQueue: NotificationItem[];
 
-  //向系统发送通知
-  public sendNotification(item: NotificationItem) {}
+  public constructor() {
+    this.notificationQueue = [];
+  }
 
-  //保存通知项目(防止用户不慎关闭程序, 当用户在通知还未过期时再次打开, 即可继续计时)
-  public saveNotification() {}
+  //加入通知队列
+  public enqueue(item: NotificationItem) {
+    //如果不存在才加入
+    if (
+      !this.notificationQueue.find((i) => {
+        i.title === item.title;
+      })
+    ) {
+      this.notificationQueue.push(item);
+      setTimeout(() => {
+        nativeSendNotification(item);
+        this.notificationQueue = this.notificationQueue.filter(
+          (i) => i.title !== item.title
+        );
+      }, item.delay);
+      console.log("设置通知成功");
+    } else {
+      throw new Error("Cannot create duplicated notifications.");
+    }
+  }
+
+  //序列化, 保存通知项目(防止用户不慎关闭程序, 当用户在通知还未过期时再次打开, 即可继续计时)
+  public serialize() {
+    //TODO
+  }
+
+  //反序列化, 加载之前关闭时剩余的通知项目
+  public deserialize() {
+    //TODO
+  }
 }

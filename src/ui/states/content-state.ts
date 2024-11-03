@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { DEFAULT_NOTE_TITLE } from "../constants";
+import { readRecentTitle } from "../actions/api";
 
 export interface Content {
   content: string;
@@ -30,7 +31,7 @@ export const useTitle = create<Title>((set, get) => ({
     })),
   fetchAndSetPrevTitle: async () => {
     try {
-      let savedPervTitle = await window.noteService.readRecentTitle();
+      let savedPervTitle = await readRecentTitle();
       console.log("最近标题:", savedPervTitle);
       if (!savedPervTitle) {
         savedPervTitle = DEFAULT_NOTE_TITLE;

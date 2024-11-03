@@ -26,6 +26,7 @@
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.4.1",
     "react-material-web": "^2.2.1",
+    "react-time-picker": "^7.0.0",
     "sqlite3": "^5.1.7",
     "uuid": "^11.0.2",
     "zustand": "^5.0.0"
