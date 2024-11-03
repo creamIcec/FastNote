@@ -2,6 +2,8 @@
 import sqlite3 from "sqlite3";
 import { v4 as uuidv4 } from "uuid";
 import { ExternalSaveRecord, saveNativeFile } from "./fs-utils.js";
+import { app } from "electron";
+import path from "path";
 export type Note = {
   id: string;
   content: string;
@@ -35,7 +37,10 @@ export class NoteService {
       sqlite3.verbose();
     }
     this.isDebug = isDebug;
-    this.db = new sqlite3.Database("notes.db");
+    // 获取用户数据目录
+    const userDataPath = app.getPath("userData");
+    const dbPath = path.join(userDataPath, "notes.db");
+    this.db = new sqlite3.Database(dbPath);
     this.init();
   }
 

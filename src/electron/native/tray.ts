@@ -1,9 +1,17 @@
-import { BrowserWindow, Menu, nativeImage, Tray } from "electron";
+import { app, BrowserWindow, Menu, nativeImage, Tray } from "electron";
+import path from "path";
+import { isDev } from "../util.js";
 
 export function initializeTray() {
   //TODO: 从public中读取图标
 
-  const icon = nativeImage.createFromPath("favicon-32x32.png");
+  const iconPath = isDev()
+    ? path.join(app.getAppPath(), "./dist-electron/resources/favicon-32x32.png")
+    : path.join(
+        app.getAppPath(),
+        "./dist-electron/resources/favicon-32x32.png"
+      );
+  const icon = nativeImage.createFromPath(iconPath);
   const tray = new Tray(icon);
 
   const contextMenu = Menu.buildFromTemplate([
