@@ -48,3 +48,12 @@
   -webkit-app-region: no-drag;
   width: fit-content;
 }
+
+.title-input {
+  --md-outlined-text-field-top-space: 4px;
+  --md-outlined-text-field-bottom-space: 4px;
+}
+
+.title-text {
+  color: var(--text-color);
+}

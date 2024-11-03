@@ -9,4 +9,17 @@ electron.contextBridge.exposeInMainWorld("windowControl", {
 //暴露数据操作到渲染进程
 electron.contextBridge.exposeInMainWorld("noteService", {
   //TODO: 传递参数的invoke/send
+  saveNote: (name: string, content: string) =>
+    electron.ipcRenderer.invoke("note:save", name, content),
+  readNote: (name: string) => electron.ipcRenderer.invoke("note:read", name),
+  saveExternal: (name: string) =>
+    electron.ipcRenderer.invoke("note:saveExternal", name),
+  createNote: (name: string) =>
+    electron.ipcRenderer.invoke("note:create", name),
+  renameNote: (name: string, newName: string) =>
+    electron.ipcRenderer.invoke("note:rename", name, newName),
+  readRecentTitle: () => electron.ipcRenderer.invoke("note:readRecentTitle"),
+  saveRecentTitle: (name: string) =>
+    electron.ipcRenderer.invoke("note:saveRecentTitle", name),
+  readNoteList: () => electron.ipcRenderer.invoke("notelist:read"),
 });

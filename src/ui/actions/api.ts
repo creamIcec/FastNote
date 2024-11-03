@@ -5,24 +5,37 @@ export function getCurrentNoteName() {
   return "Title";
 }
 
+export async function saveRecentNoteName(name: string) {
+  return await window.noteService.saveRecentTitle(name);
+}
+
 // 重命名笔记
-export function renameNote(noteId: string, newName: string) {}
+export async function renameNote(noteName: string, newName: string) {
+  return await window.noteService.renameNote(noteName, newName);
+}
 
 // 保存笔记名称
 export function saveNoteName(noteId: string, name: string) {}
 
 // 加载笔记列表
-export function loadNoteList() {}
+export function readNoteList() {}
 
 // 保存笔记列表
 export function saveNoteList() {}
 
 // 保存笔记
-export function saveNote(noteId: string, content: string) {}
+export async function saveNote(noteName: string, content: string) {
+  return await window.noteService.saveNote(noteName, content);
+}
+
+//保存到外部文件
+export async function saveToExternalFile(noteName: string) {
+  return await window.noteService.saveExternal(noteName);
+}
 
 // 加载笔记
-export function loadNote(noteId: string) {
-  return "Content";
+export async function readNote(noteName: string) {
+  return await window.noteService.readNote(noteName);
 }
 
 // 复制当前笔记内容到剪贴板

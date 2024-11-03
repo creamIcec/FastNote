@@ -30,6 +30,14 @@ body {
   --md-sys-color-inverse-primary: #5fdbb9;
 }
 
+body {
+  --text-color: #000000;
+}
+
+body.dark-mode {
+  --text-color: #ffffff;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;

@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "npm-run-all --parallel dev:react dev:electron",
     "dev:react": "vite",
-    "dev:electron": "npm run transpile:electron && cross-env NODE_ENV=development electron .",
+    "dev:electron": "npm run transpile:electron && chcp 65001 && cross-env NODE_ENV=development electron .",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -17,11 +17,14 @@
     "dist:linux": "npm run transpile:electron && npm run build && electron-builder --linux --arm64"
   },
   "dependencies": {
+    "@material/material-color-utilities": "^0.3.0",
     "clsx": "^2.1.1",
     "cross-env": "^7.0.3",
+    "lodash": "^4.17.21",
     "npm-run-all": "^4.1.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-hot-toast": "^2.4.1",
     "react-material-web": "^2.2.1",
     "sqlite3": "^5.1.7",
     "uuid": "^11.0.2",
@@ -29,6 +32,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
+    "@types/lodash": "^4.17.13",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",

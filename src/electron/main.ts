@@ -2,8 +2,9 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
 import { getPreloadPath, isDebug, isDev } from "./util.js";
 import {
+  registerDataEventHandlers,
   registerWindowCloseEventHandler,
-  registryIpcEventHandlers,
+  registryWindowEventHandlers,
 } from "./events/event-handlers.js";
 import {
   registerGlobalBringUpWindowShortCut,
@@ -11,18 +12,28 @@ import {
 } from "./events/glabol-event-handlers.js";
 import { initializeTray, registerTrayClickEvent } from "./native/tray.js";
 import { showWindow, toggleWindow } from "./actions/window-actions.js";
+import { NoteService } from "./io/note-service.js";
 
 app.on("ready", () => {
   const mainWindow = new BrowserWindow({
     width: 512,
     height: 650,
+    minWidth: 270,
+    minHeight: 512,
     titleBarStyle: "hidden",
     webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
       preload: getPreloadPath(),
     },
   });
 
-  if (isDebug()) {
+  const debug = isDebug();
+
+  //创建笔记服务对象
+  const noteService = new NoteService(debug);
+
+  if (debug) {
     mainWindow.webContents.openDevTools();
   }
 
@@ -32,8 +43,12 @@ app.on("ready", () => {
     mainWindow.loadFile(path.join(app.getAppPath(), "/dist-react/index.html"));
   }
 
-  //注册所有ipcMain.handle事件监听
-  registryIpcEventHandlers(mainWindow);
+  //注册所有窗口控制事件监听
+  registryWindowEventHandlers(mainWindow);
+
+  //注册所有数据处理事件监听
+  registerDataEventHandlers(noteService);
+
   //注册全局快捷键
   registerGlobalBringUpWindowShortCut(() => {
     toggleWindow(mainWindow);

@@ -6,6 +6,12 @@
   align-items: center;
   background-color: var(--md-sys-color-primary-container);
 }
+
+.head-container {
+  padding: 0 4px;
+  font-size: 12px;
+}
+
 .tail-container {
   margin-left: auto;
   display: flex;
@@ -14,4 +20,28 @@
   align-items: center;
   column-gap: 4px;
   padding: 4px;
+}
+
+.indicator {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  column-gap: 4px;
+  align-items: center;
+}
+
+.success-text {
+  color: var(--md-sys-color-inverse-surface);
+}
+
+.error-text {
+  color: var(--md-sys-color-error);
+}
+
+.toast {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  row-gap: 8px;
+  column-gap: 8px;
 }
