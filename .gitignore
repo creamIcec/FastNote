@@ -35,3 +35,6 @@ explore
 
 # 测试截图
 screenshots
+
+# 数据
+*.db
