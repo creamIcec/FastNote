@@ -2,6 +2,9 @@ import { app, BrowserWindow, Menu, nativeImage, Tray } from "electron";
 import path from "path";
 import { isDev } from "../util.js";
 
+import GetLogger from "../logger.js";
+const logger = GetLogger(import.meta.url);
+
 export function initializeTray() {
   //TODO: 从public中读取图标
 
@@ -19,9 +22,9 @@ export function initializeTray() {
       label: "保持窗口置顶",
       type: "checkbox",
       click: (menuItem, window, event) => {
-        console.log(`置顶:${menuItem.checked}`);
+        logger.info(`置顶:${menuItem.checked}`);
         const _window = BrowserWindow.getAllWindows()[0];
-        console.log(_window);
+        logger.info(_window);
         _window?.setAlwaysOnTop(menuItem.checked, "pop-up-menu");
       },
     },
@@ -29,7 +32,7 @@ export function initializeTray() {
       label: "退出程序",
       type: "normal",
       click: (menuItem, window, event) => {
-        console.log("退出程序");
+        logger.info("退出程序");
         window?.close();
         process.exit(0);
       },
