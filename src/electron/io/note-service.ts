@@ -6,6 +6,7 @@ import { app } from "electron";
 import path from "path";
 
 import getLogger from "../logger.js";
+import { Msg } from "../types.js";
 const logger = getLogger(import.meta.url);
 
 export type Note = {
@@ -20,11 +21,6 @@ export type NoteId = {
 
 export type RecentNote = {
   id: string;
-};
-
-export type PromiseContent = {
-  state: boolean;
-  payload: string;
 };
 
 //笔记服务对象
@@ -66,11 +62,11 @@ export class NoteService {
     this.db.run("CREATE TABLE IF NOT EXISTS noteId (id TEXT, name TEXT)");
     this.db.run("CREATE TABLE IF NOT EXISTS recentNote (id TEXT)", (err) => {
       if (err) {
-        console.error(`Unable to create recentNote table: `, err);
+        logger.error(`Unable to create recentNote table: `, err);
       }
       this.db.run(`INSERT INTO recentNote VALUES (?)`, [""], (e) => {
         if (e) {
-          console.error(`Unable to seed recentNote table: `, e);
+          logger.error(`Unable to seed recentNote table: `, e);
         }
       });
     });
@@ -133,8 +129,7 @@ export class NoteService {
       return;
     }
     const id = await this.getEntryIdByName(name);
-    console.log(`存在${name}对应id: ${id}, 开始写入...`);
-    console.log(`写入内容:${content}`);
+    logger.info(`存在${name}对应id, 开始写入...`);
     return new Promise<string>((resolve, reject) =>
       this.db.run(
         `UPDATE note SET content = ? WHERE id = ?`,
@@ -176,7 +171,7 @@ export class NoteService {
             const result = await saveNativeFile(name, row.content);
             return resolve(result);
           } catch (e) {
-            console.log("Cannot save to external file: ", e);
+            logger.log("保存到外部文件失败: ", e);
           }
         }
       );
@@ -190,10 +185,10 @@ export class NoteService {
     }
     const id = await this.getEntryIdByName(name);
     if (!id) {
-      console.log(`不存在${name}, 返回undefined`);
+      logger.warn(`不存在${name}, 返回undefined`);
       return undefined;
     }
-    console.log(`存在${name}对应id: ${id}, 开始读取...`);
+    logger.info(`存在${name}对应id: ${id}, 开始读取...`);
     return new Promise<string | undefined>((resolve, reject) => {
       this.db.get(
         `SELECT * FROM note WHERE id = ?`,
@@ -220,8 +215,6 @@ export class NoteService {
     }
     return new Promise<string | undefined>((resolve, reject) => {
       this.db.get(`SELECT * FROM recentNote`, async (err, row: RecentNote) => {
-        console.log(row);
-        console.log(`最近的笔记id:${row.id}`);
         const name = await this.getNameById(row.id);
         if (err) {
           return reject(err.message);
@@ -232,7 +225,7 @@ export class NoteService {
         if (row.id === "") {
           return resolve(undefined);
         }
-        console.log(`最近的笔记标题:${name}`);
+        logger.info(`最近的笔记标题:${name}`);
         resolve(name);
       });
     });
@@ -245,7 +238,7 @@ export class NoteService {
       return;
     }
     const id = await this.getEntryIdByName(name);
-    console.log(`正在保存新的最近标题:${id}`);
+    logger.info(`正在保存新的最近标题`);
     return new Promise<string | undefined>((resolve, reject) => {
       this.db.get(
         `UPDATE recentNote SET id = ?`,
@@ -265,15 +258,13 @@ export class NoteService {
   }
 
   //删除笔记项
-  public async deleteNote(
-    name: string
-  ): Promise<{ state: boolean; payload: string }> {
+  public async deleteNote(name: string): Promise<Msg> {
     if (!name || typeof name !== "string") {
       throw new Error("Invalid name parameter");
     }
     logger.info(`Start Deleting: ${name}`);
     if (!this.db) {
-      console.log("Delete not succeed: database not connected");
+      logger.error("Delete not succeed: database not connected");
       throw new Error("Database not connected");
     }
     try {
@@ -333,7 +324,7 @@ export class NoteService {
     }
     const id = NoteService.getNewId();
     const createdTime = NoteService.getCreatedTime();
-    return new Promise<PromiseContent>(async (resolve, reject) => {
+    return new Promise<Msg>(async (resolve, reject) => {
       try {
         const _ = await this.writeToNoteList(id, name);
         const initialContent = "";
@@ -359,12 +350,12 @@ export class NoteService {
       return;
     }
     //检查是否存在
-    console.log(`尝试重命名${name} -> ${newName}`);
+    logger.info(`尝试重命名${name} -> ${newName}`);
     const id = await this.getEntryIdByName(name);
     if (id === undefined) {
       throw new Error("Note does not exist");
     }
-    console.log(`将${name}重命名成${newName}, id为${id}`);
+    logger.info(`将${name}重命名成${newName}`);
     return new Promise<string>((resolve, reject) =>
       this.db.run(
         `UPDATE noteId SET name = ? WHERE id = ?`,
@@ -382,7 +373,7 @@ export class NoteService {
   //检查是否存在一条笔记
   public async exists(name: string) {
     const id = await this.getEntryIdByName(name);
-    console.log("id:", id);
+    logger.info(`${name}对应的id存在`);
     return id !== undefined;
   }
 
@@ -392,7 +383,7 @@ export class NoteService {
     if (!this.db) {
       return;
     }
-    console.log(`写入笔记列表:${name}`);
+    logger.info(`将${name}写入笔记列表`);
     return new Promise<string>((resolve, reject) => {
       this.db.run(
         `INSERT INTO noteId VALUES (?, ?)`,
@@ -428,7 +419,7 @@ export class NoteService {
     if (!this.db) {
       return;
     }
-    console.log("读取最后一条");
+    logger.info("读取笔记列表中的最后一条");
     return new Promise<object | undefined>((resolve, reject) => {
       this.db.get(
         `SELECT name FROM note t1
@@ -437,11 +428,11 @@ export class NoteService {
          LIMIT 1`,
         (err, row: NoteId | undefined) => {
           if (err) {
-            console.log(err);
+            logger.error(err);
             return reject({ state: false, payload: err.message });
           }
           if (!row) {
-            console.log("no last item data");
+            logger.error("no last item data");
             return resolve({ state: false, payload: undefined });
           }
           resolve({ state: true, payload: row.name });

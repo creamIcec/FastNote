@@ -1,5 +1,8 @@
 import { nativeSendNotification } from "../native/notification.js";
 
+import GetLogger from "../logger.js";
+const logger = GetLogger(import.meta.url);
+
 //通知类
 export class NotificationItem {
   private _title: string;
@@ -43,7 +46,7 @@ export class NotificationService {
           (i) => i.title !== item.title
         );
       }, item.delay);
-      console.log("设置通知成功");
+      logger.info("通知设置成功");
     } else {
       throw new Error("Cannot create duplicated notifications.");
     }

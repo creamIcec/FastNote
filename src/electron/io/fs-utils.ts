@@ -1,6 +1,9 @@
 import { dialog } from "electron";
 import fs from "node:fs";
 
+import GetLogger from "../logger.js";
+const logger = GetLogger(import.meta.url);
+
 export type ExternalSaveRecord = {
   state: boolean;
   payload: string;
@@ -27,7 +30,7 @@ export async function saveNativeFile(fileName: string, content: string) {
       fs.writeFileSync(savePath, content, "utf-8");
       resolve({ state: true, payload: savePath });
     } catch (e) {
-      console.error("Failed to save file: ", e);
+      logger.error("保存到外部文件失败: ", e);
       reject(e);
     }
   });

@@ -5,20 +5,23 @@ import {
   NotificationService,
 } from "../io/notification-service.js";
 
+import getLogger from "../logger.js";
+const logger = getLogger(import.meta.url);
+
 export function registryWindowEventHandlers(window: BrowserWindow) {
   ipcMain.handle("minimize", () => {
-    console.log("minimize");
+    logger.info("窗口最小化");
     window.minimize();
   });
 
   ipcMain.handle("maximize", () => {
-    console.log("maximize");
+    logger.info("窗口最大化");
     window.maximize();
   });
 
   // 关闭窗口: 并不是关闭,而是隐藏到托盘
   ipcMain.handle("hide", () => {
-    console.log("hide");
+    logger.info("窗口最小化到托盘");
     window.hide();
   });
 }
@@ -46,7 +49,7 @@ export function registerDataEventHandlers(noteService: NoteService) {
 
   ipcMain.handle("note:read", async (event, name: string) => {
     const content = await noteService.readFromNote(name);
-    console.log(`读取内容:${content}`);
+    logger.info(`读取内容:${content}`);
     return content !== undefined ? content : undefined;
   });
 
@@ -54,11 +57,11 @@ export function registerDataEventHandlers(noteService: NoteService) {
     try {
       const result = await noteService.saveToExternalFile(name);
       if (result && result.state) {
-        console.log(`已保存到外部文件, 路径: ${result.payload}`);
+        logger.info(`已保存到外部文件, 路径: ${result.payload}`);
         return result.payload;
       }
     } catch (e) {
-      console.log(`保存时遇到错误:${e}`);
+      logger.error(`保存时遇到错误:${e}`);
       return e;
     }
   });
@@ -72,7 +75,7 @@ export function registerDataEventHandlers(noteService: NoteService) {
           return true;
         }
       } catch (e) {
-        console.log(`重命名时遇到错误:${e}`);
+        logger.error(`重命名时遇到错误:${e}`);
         return e;
       }
     }
@@ -105,7 +108,7 @@ export function registerDataEventHandlers(noteService: NoteService) {
       }
       return result.state;
     } catch (e) {
-      console.log("创建时遇到错误:", e);
+      logger.error("创建时遇到错误:", e);
       return false;
     }
   });
@@ -113,13 +116,13 @@ export function registerDataEventHandlers(noteService: NoteService) {
   ipcMain.handle("notelist:read", async (event) => {
     try {
       const list = await noteService.readNoteList();
-      console.log(`笔记列表:${list}`);
+      logger.info(`笔记列表:${list}`);
       if (list) {
         return list;
       }
       return [];
     } catch (e) {
-      console.log("读取笔记列表时遇到错误:", e);
+      logger.error("读取笔记列表时遇到错误:", e);
       return [];
     }
   });
@@ -130,11 +133,11 @@ export function registerDataEventHandlers(noteService: NoteService) {
       if (!(await noteService.exists(name))) {
         return false;
       }
-      const result = (await noteService.deleteNote(name)) as any; //Temp fix
-      console.log(result);
+      const result = await noteService.deleteNote(name);
+      logger.info(`删除结果: ${result.state ? "成功" : "失败"}`);
       return result.state;
     } catch (e) {
-      console.log("删除时遇到错误:", e);
+      logger.error("删除时遇到错误:", e);
       return false;
     }
   });
@@ -142,7 +145,7 @@ export function registerDataEventHandlers(noteService: NoteService) {
   ipcMain.handle("note:readLastNameInList", async (event) => {
     try {
       const result = (await noteService.readLastNameInList()) as any;
-      console.log(result);
+      logger.info(`读取的列表中最后一项:${result}`);
       if (!result.state) {
         return undefined;
       }
@@ -156,7 +159,7 @@ export function registerNotificationEventHandlers(
   notificationService: NotificationService
 ) {
   ipcMain.handle("notification:set", async (event, delay, name, content?) => {
-    console.log(`设置的通知延迟: ${delay}`);
+    logger.info(`设置的通知延迟: ${delay}`);
     notificationService.enqueue(new NotificationItem(content, name, delay));
   });
 }

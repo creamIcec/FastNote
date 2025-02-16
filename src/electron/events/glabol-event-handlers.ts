@@ -1,17 +1,20 @@
 import { BrowserWindow, globalShortcut } from "electron";
 
+import getLogger from "../logger.js";
+const logger = getLogger(import.meta.url);
+
 export function registerGlobalBringUpWindowShortCut(callback?: () => void) {
   const ret = globalShortcut.register("Meta+Alt+X", () => {
-    console.log("Global keybind is pressed");
+    logger.info("Global keybind is pressed");
     callback?.();
   });
 
   if (!ret) {
-    console.log("registration failed");
+    logger.error("registration failed");
   }
 
   // 检查全局快捷键是否注册成功
-  console.log(globalShortcut.isRegistered("Meta+Alt+X"));
+  logger.info(globalShortcut.isRegistered("Meta+Alt+X"));
 }
 
 export function unregisterGlobalBringUpWindowShortCut() {
