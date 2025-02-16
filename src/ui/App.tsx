@@ -52,7 +52,7 @@ function App() {
       {title && <NoteArea title={title} />}
       <Footer />
 
-      {isOpen && <SideBar />}
+      {isOpen && title && <SideBar currentNoteTitle={title} />}
       <Toaster position="bottom-center"></Toaster>
     </div>
   );

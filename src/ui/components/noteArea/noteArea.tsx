@@ -39,6 +39,8 @@ export default function NoteArea({ title }: { title: string }) {
       }
     };
     fetchNote();
+
+    return () => {};
   }, [title]);
 
   const handleSaveThrottled = lodash.throttle(
