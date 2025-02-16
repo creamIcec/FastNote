@@ -9,13 +9,35 @@ export interface Content {
 
 export interface Title {
   title: string | undefined;
-  setTitle: (newTitle: string) => void;
+  setTitle: (newTitle: string | undefined) => void;
   fetchAndSetPrevTitle: () => void;
+}
+
+export interface AttemptDelete {
+  name: string | undefined;
+  content: string | undefined;
+  setName: (newName: string | undefined) => void;
+  setContent: (newContent: string | undefined) => void;
 }
 
 export const useContent = create<Content>((set, get) => ({
   content: "",
-  setContent: (newContent: string) =>
+  setContent: (newContent) =>
+    set((prev) => ({
+      ...prev,
+      content: newContent,
+    })),
+}));
+
+export const useAttemptDelete = create<AttemptDelete>((set, get) => ({
+  name: undefined,
+  content: undefined,
+  setName: (newName) =>
+    set((prev) => ({
+      ...prev,
+      name: newName,
+    })),
+  setContent: (newContent) =>
     set((prev) => ({
       ...prev,
       content: newContent,
@@ -24,7 +46,7 @@ export const useContent = create<Content>((set, get) => ({
 
 export const useTitle = create<Title>((set, get) => ({
   title: undefined,
-  setTitle: (newTitle: string) =>
+  setTitle: (newTitle) =>
     set((prev) => ({
       ...prev,
       title: newTitle,

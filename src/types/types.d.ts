@@ -11,6 +11,8 @@ interface Window {
     saveExternal: (name: string) => Promise<string> | Promise<undefined>;
     createNote: (name: string) => Promise<string> | Promise<boolean>;
     renameNote: (name: string, newName: string) => Promise<boolean>;
+    deleteNote: (name: string) => Promise<boolean>;
+    readLastNameInList: () => Promise<string> | Promise<boolean>;
     readRecentTitle: () => Promise<string> | Promise<undefined>;
     saveRecentTitle: (name: string) => Promise<string> | Promise<undefined>;
     readNoteList: () => Promise<[]>;

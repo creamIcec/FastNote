@@ -4,6 +4,10 @@ import { v4 as uuidv4 } from "uuid";
 import { ExternalSaveRecord, saveNativeFile } from "./fs-utils.js";
 import { app } from "electron";
 import path from "path";
+
+import getLogger from "../logger.js";
+const logger = getLogger(import.meta.url);
+
 export type Note = {
   id: string;
   content: string;
@@ -48,11 +52,17 @@ export class NoteService {
     return uuidv4();
   }
 
+  private static getCreatedTime() {
+    return Date.now();
+  }
+
   private init() {
     if (!this.db) {
       return;
     }
-    this.db.run("CREATE TABLE IF NOT EXISTS note (id TEXT, content TEXT)");
+    this.db.run(
+      "CREATE TABLE IF NOT EXISTS note (id TEXT, create_time INTEGER, content TEXT)"
+    );
     this.db.run("CREATE TABLE IF NOT EXISTS noteId (id TEXT, name TEXT)");
     this.db.run("CREATE TABLE IF NOT EXISTS recentNote (id TEXT)", (err) => {
       if (err) {
@@ -202,6 +212,7 @@ export class NoteService {
   }
 
   //读取最近的笔记标题
+  //读取最近的笔记标题
   //在启动程序时执行
   public async readRecentTitle() {
     if (!this.db) {
@@ -254,19 +265,61 @@ export class NoteService {
   }
 
   //删除笔记项
-  public async deleteNote(name: string) {
-    if (!this.db) {
-      return;
+  public async deleteNote(
+    name: string
+  ): Promise<{ state: boolean; payload: string }> {
+    if (!name || typeof name !== "string") {
+      throw new Error("Invalid name parameter");
     }
-    const id = this.getEntryIdByName(name);
-    return new Promise((resolve, reject) => {
-      this.db.run(`DELETE FROM note WHERE id = ?`, [id], function (err) {
-        if (err) {
-          return reject(err.message);
-        }
-        resolve("success");
+    logger.info(`Start Deleting: ${name}`);
+    if (!this.db) {
+      console.log("Delete not succeed: database not connected");
+      throw new Error("Database not connected");
+    }
+    try {
+      const id = await this.getEntryIdByName(name);
+      if (!id) {
+        logger.error(
+          `Delete not succeed: name ${name} does not match any note in database. Please check whether it exists.`
+        );
+        return {
+          state: false,
+          payload: `name '${name}' does not match any note in database. Please check whether it exists.`,
+        };
+      }
+      await new Promise((resolve, reject) => {
+        this.db.run("BEGIN TRANSACTION");
+        this.db.run(`DELETE FROM noteId WHERE id = ?`, [id], (err) => {
+          if (err) {
+            this.db.run("ROLLBACK");
+            reject({
+              state: false,
+              payload: "error occured, id not exists.",
+            });
+          }
+        });
+        this.db.run(`DELETE FROM note WHERE id = ?`, [id], (err) => {
+          if (err) {
+            this.db.run("ROLLBACK");
+            reject({
+              state: false,
+              payload: "error occured, id not exists.",
+            });
+          } else {
+            this.db.run("COMMIT");
+            resolve({
+              state: true,
+              payload: "success",
+            });
+          }
+        });
       });
-    });
+      logger.info(`Successfully deleted note: ${name}`);
+      return { state: true, payload: "success" };
+    } catch (error: any) {
+      logger.error(`Error deleting note: ${error.message}`);
+      return { state: false, payload: `Error occurred: ${error.message}` };
+    }
   }
 
   //创建新笔记
@@ -279,13 +332,14 @@ export class NoteService {
       throw new Error("Duplicate note");
     }
     const id = NoteService.getNewId();
+    const createdTime = NoteService.getCreatedTime();
     return new Promise<PromiseContent>(async (resolve, reject) => {
       try {
         const _ = await this.writeToNoteList(id, name);
         const initialContent = "";
         this.db.run(
-          `INSERT INTO note VALUES (?, ?)`,
-          [id, initialContent],
+          `INSERT INTO note VALUES (?, ?, ?)`,
+          [id, createdTime, initialContent],
           function (err) {
             if (err) {
               return reject(err.message);
@@ -366,6 +420,33 @@ export class NoteService {
         const result = rows.map((row) => row.name); // 将所有 `name` 提取出来
         resolve(result); // 确保在所有数据读取后返回结果
       });
+    });
+  }
+
+  //读取笔记列表中排序在最后的笔记名称
+  public async readLastNameInList() {
+    if (!this.db) {
+      return;
+    }
+    console.log("读取最后一条");
+    return new Promise<object | undefined>((resolve, reject) => {
+      this.db.get(
+        `SELECT name FROM note t1
+         INNER JOIN noteId t2 ON t1.id=t2.id
+         ORDER BY t1.create_time DESC
+         LIMIT 1`,
+        (err, row: NoteId | undefined) => {
+          if (err) {
+            console.log(err);
+            return reject({ state: false, payload: err.message });
+          }
+          if (!row) {
+            console.log("no last item data");
+            return resolve({ state: false, payload: undefined });
+          }
+          resolve({ state: true, payload: row.name });
+        }
+      );
     });
   }
 

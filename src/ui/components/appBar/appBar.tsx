@@ -2,17 +2,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import {
   MdCheckbox,
-  MdDialog,
   MdElevatedCard,
   MdFilledButton,
-  MdFilledCard,
-  MdFilledTextField,
   MdIcon,
   MdIconButton,
   MdOutlinedButton,
   MdOutlinedTextField,
   MdOutlinedTextFieldElement,
-  MdTextButton,
 } from "react-material-web";
 import { useShallow } from "zustand/shallow";
 import {
@@ -25,11 +21,10 @@ import {
 } from "../../actions/api";
 import { useContent, useTitle } from "../../states/content-state";
 import { useSidebarState } from "../../states/sidebar-state";
-import styles from "./appBar.module.css";
 import { useThemeState } from "../../states/theme-state";
-import { changeTheme } from "../../utils/theme";
-import { TimePicker } from "react-time-picker";
 import { getCurrentHour, getCurrentMinute } from "../../utils/datetime";
+import { changeTheme } from "../../utils/theme";
+import styles from "./appBar.module.css";
 
 export default function AppBar({ title }: { title: string }) {
   const [isSidebarOpen, setIsSidebarOpen] = useSidebarState(

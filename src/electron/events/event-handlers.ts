@@ -106,7 +106,7 @@ export function registerDataEventHandlers(noteService: NoteService) {
       return result.state;
     } catch (e) {
       console.log("创建时遇到错误:", e);
-      return e;
+      return false;
     }
   });
 
@@ -120,8 +120,34 @@ export function registerDataEventHandlers(noteService: NoteService) {
       return [];
     } catch (e) {
       console.log("读取笔记列表时遇到错误:", e);
-      return e;
+      return [];
     }
+  });
+
+  ipcMain.handle("note:delete", async (event, name) => {
+    try {
+      //不存在这个笔记, 无需删除
+      if (!(await noteService.exists(name))) {
+        return false;
+      }
+      const result = (await noteService.deleteNote(name)) as any; //Temp fix
+      console.log(result);
+      return result.state;
+    } catch (e) {
+      console.log("删除时遇到错误:", e);
+      return false;
+    }
+  });
+
+  ipcMain.handle("note:readLastNameInList", async (event) => {
+    try {
+      const result = (await noteService.readLastNameInList()) as any;
+      console.log(result);
+      if (!result.state) {
+        return undefined;
+      }
+      return result.payload;
+    } catch (e) {}
   });
 }
 

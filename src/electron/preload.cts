@@ -22,6 +22,10 @@ electron.contextBridge.exposeInMainWorld("noteService", {
   saveRecentTitle: (name: string) =>
     electron.ipcRenderer.invoke("note:saveRecentTitle", name),
   readNoteList: () => electron.ipcRenderer.invoke("notelist:read"),
+  deleteNote: (name: string) =>
+    electron.ipcRenderer.invoke("note:delete", name),
+  readLastNameInList: () =>
+    electron.ipcRenderer.invoke("note:readLastNameInList"),
 });
 
 electron.contextBridge.exposeInMainWorld("notificationService", {

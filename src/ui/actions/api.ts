@@ -47,6 +47,16 @@ export async function createNote(name: string) {
   return await window.noteService.createNote(name);
 }
 
+// 删除笔记
+export async function deleteNote(name: string) {
+  return await window.noteService.deleteNote(name);
+}
+
+// 读取最后一条笔记名称
+export async function readLastNoteNameInList() {
+  return await window.noteService.readLastNameInList();
+}
+
 // 安排一段时间后的提醒
 export async function scheduleNotification(
   target: string,
