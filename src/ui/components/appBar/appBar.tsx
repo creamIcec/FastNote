@@ -29,33 +29,36 @@ import { changeTheme } from "../../utils/theme";
 import styles from "./appBar.module.css";
 import WindowBlockComponentWrapper from "../WindowBlockComponentWrapper";
 import { isCharacterKey, isFunctionKeyDuplicated } from "../../utils/keyboard";
+import ShortcutBindWindow from "../ShortcutBindWindow";
 
-export default function AppBar({ title }: { title: string }) {
+export default function AppBar({
+  title,
+  setTitle,
+}: {
+  title: string;
+  setTitle: (newTitle: string) => void;
+}) {
   const [isSidebarOpen, setIsSidebarOpen] = useSidebarState(
     useShallow((state) => [state.isOpen, state.setIsOpen])
   );
 
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
-  const [isModifyKeyBinding, setIsModifyKeyBinding] = useState(false);
-
-  const [setTitle] = useTitle(useShallow((state) => [state.setTitle]));
 
   const titleRef = useRef<MdOutlinedTextFieldElement>(null);
   const [isRenaming, setIsRenaming] = useState<boolean>(false);
-
-  const [keys, setKeys] = useState<string[]>([]);
 
   const [theme, setTheme, getNextTheme] = useThemeState(
     useShallow((state) => [state.theme, state.setTheme, state.getNextTheme])
   );
 
   const [content] = useContent(useShallow((state) => [state.content]));
+  const [isModifyKeyBinding, setIsModifyKeyBinding] = useState(false);
 
   const [value, onTimeChange] = useState(
     `${getCurrentHour()}:${getCurrentMinute()}`
   );
 
-  const handleClick = () => {
+  const handleOpenSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
@@ -68,72 +71,9 @@ export default function AppBar({ title }: { title: string }) {
   };
 
   const handleBindKey = (e: any) => {
-    if (isModifyKeyBinding) {
-      e.preventDefault();
-      return;
-    }
     console.log("用户打开修改按键界面");
     setIsModifyKeyBinding(!isModifyKeyBinding);
   };
-
-  const appendKeyToSeries = useCallback(
-    (e: KeyboardEvent) => {
-      //1. 用户按下一个键
-      //2. 判断是否符合规则, 符合则添加到序列中
-      //3. 当用户按下不带任何修饰键的Enter后, 注册刚刚按下的新按键序列; 当用户按下Esc或鼠标点击输入区域以外的地方后, 退出修改流程
-      //4. 结束
-      e.preventDefault();
-      if (e.repeat) {
-        return;
-      }
-      const key = e.code === "Space" ? "Space" : e.key;
-      if (key === "Escape") {
-        setIsModifyKeyBinding(false);
-        return;
-      }
-      const input = keyBindingInputRef.current as unknown as HTMLInputElement;
-      if (!input) {
-        console.warn("无法获取到按键绑定输入框");
-        return;
-      }
-
-      const lastKey = keys.at(-1);
-      let rebind = false;
-
-      if (isCharacterKey(lastKey) || lastKey === "Space") {
-        input.value = "";
-        rebind = true;
-      }
-
-      if (isFunctionKeyDuplicated([...keys, key])) {
-        input.value = "";
-        rebind = true;
-      }
-
-      if (input.value !== "") {
-        input.value += "+";
-      }
-
-      input.value += key;
-      if (rebind) {
-        setKeys([key]);
-      } else {
-        setKeys([...keys, key]);
-      }
-    },
-    [keys]
-  );
-
-  const tryApplyShortcut = useCallback(
-    (e: KeyboardEvent) => {
-      if (!isModifyKeyBinding) {
-        return;
-      }
-      e.preventDefault();
-      applyShortcut(keys);
-    },
-    [keys]
-  );
 
   //如果传入的shortcut为空, 则恢复原始快捷键; 否则设置shortcut为快捷键
   const applyShortcut = (shortcut?: string[]) => {
@@ -147,19 +87,8 @@ export default function AppBar({ title }: { title: string }) {
   };
 
   useEffect(() => {
-    document.addEventListener("keydown", appendKeyToSeries);
-    document.addEventListener("keyup", tryApplyShortcut);
-    return () => {
-      document.removeEventListener("keydown", appendKeyToSeries);
-      document.removeEventListener("keyup", tryApplyShortcut);
-    };
-  }, [appendKeyToSeries]);
-
-  useEffect(() => {
-    if (!isModifyKeyBinding) {
-      setKeys([]);
-    }
-  }, [isModifyKeyBinding]);
+    console.log("工具栏已检测到标题变化");
+  }, [title]);
 
   const handleHide = () => {
     hideWindow();
@@ -204,7 +133,7 @@ export default function AppBar({ title }: { title: string }) {
         }
       );
     }
-  }, []);
+  }, [title]);
 
   const handleRenameAttempt = useCallback(() => {
     setIsRenaming(true);
@@ -292,7 +221,6 @@ export default function AppBar({ title }: { title: string }) {
   };
 
   const timePickerRef = useRef(null);
-  const keyBindingInputRef = useRef(null);
   const contentUseRef = useRef(null);
 
   return (
@@ -340,36 +268,14 @@ export default function AppBar({ title }: { title: string }) {
         </WindowBlockComponentWrapper>
       )}
       {isModifyKeyBinding && (
-        <WindowBlockComponentWrapper>
-          <MdElevatedCard className={styles.dialog}>
-            <div className={styles["block-container-title"]}>
-              <h3 className={styles["theme-text"]}>设置新的全局唤起快捷键</h3>
-              <p className={styles["theme-text"]}>
-                按下快捷键快速显示/隐藏应用
-              </p>
-            </div>
-            <div className={styles["block-container-input-wrapper"]}>
-              <input
-                type="text"
-                ref={keyBindingInputRef}
-                className={styles["key-bind-input"]}
-                disabled
-                placeholder="按下按键组合..."
-              />
-              <MdOutlinedButton
-                className={styles["dialog-action-button"]}
-                onClick={(e) => applyShortcut()}
-              >
-                还原原始快捷键
-              </MdOutlinedButton>
-            </div>
-            <div className={styles["block-container-action-container"]}></div>
-          </MdElevatedCard>
-        </WindowBlockComponentWrapper>
+        <ShortcutBindWindow
+          applyShortcutCallback={applyShortcut}
+          stopKeyBinding={() => setIsModifyKeyBinding(false)}
+        ></ShortcutBindWindow>
       )}
       <div className={styles["operations-container"]}>
         <div className={styles["start-container"]}>
-          <MdIconButton onClick={handleClick}>
+          <MdIconButton onClick={handleOpenSidebar}>
             <MdIcon>menu</MdIcon>
           </MdIconButton>
           <MdIconButton onClick={handleSaveExternal}>

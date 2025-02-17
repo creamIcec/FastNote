@@ -29,6 +29,7 @@ export default function NoteArea({ title }: { title: string }) {
         console.log(`当前内容:${savedContent}`);
         //如果没有保存的内容, 说明第一次运行这个程序(或数据库不存在), 则创建一个新的
         if (savedContent === undefined) {
+          console.log("第一次运行程序, 创建数据库");
           handleSaveThrottled(title, DEFAULT_NEW_NOTE_CONTENT);
           setContent(DEFAULT_NEW_NOTE_CONTENT);
           return;

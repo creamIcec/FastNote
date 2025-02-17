@@ -9,6 +9,8 @@ import getLogger from "../logger.js";
 import { Msg } from "../types.js";
 const logger = getLogger(import.meta.url);
 
+import { escape } from "../utils/file-name-util.js";
+
 export type Note = {
   id: string;
   content: string;
@@ -146,6 +148,7 @@ export class NoteService {
 
   //保存至外部文件
   public async saveToExternalFile(name: string) {
+    const escaped_name = escape(name);
     if (!this.db) {
       return;
     }
@@ -168,7 +171,7 @@ export class NoteService {
           }
           //保存
           try {
-            const result = await saveNativeFile(name, row.content);
+            const result = await saveNativeFile(escaped_name, row.content);
             return resolve(result);
           } catch (e) {
             logger.log("保存到外部文件失败: ", e);

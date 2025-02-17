@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain, Notification } from "electron";
 import path from "path";
-import { getPreloadPath, isDebug, isDev } from "./util.js";
+import { getPreloadPath, isDebug, isDev } from "./environment-util.js";
 import {
   registerDataEventHandlers,
   registerNotificationEventHandlers,
@@ -21,7 +21,7 @@ app.on("ready", async () => {
   const mainWindow = new BrowserWindow({
     width: 512,
     height: 650,
-    minWidth: 270,
+    minWidth: 304,
     minHeight: 512,
     titleBarStyle: "hidden",
     webPreferences: {

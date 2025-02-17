@@ -27,7 +27,7 @@ function App() {
   useEffect(() => {
     //应用加载时获取之前笔记的标题
     fetchAndSetPrevTitle();
-  }, [fetchAndSetPrevTitle]);
+  }, []);
 
   useEffect(() => {
     initTheme();
@@ -48,7 +48,7 @@ function App() {
     <div
       className={clsx([styles.container, !isOpen && styles["sidebar-hidden"]])}
     >
-      {title && <AppBar title={title} />}
+      {title && <AppBar title={title} setTitle={setTitle} />}
       {title && <NoteArea title={title} />}
       <Footer />
 

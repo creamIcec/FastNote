@@ -1,5 +1,5 @@
 import * as winston from "winston";
-import { isDev } from "./util.js";
+import { isDev } from "./environment-util.js";
 import { resolve } from "path";
 import { fileURLToPath } from "url";
 const { combine, timestamp, printf, splat, errors, colorize } = winston.format;
