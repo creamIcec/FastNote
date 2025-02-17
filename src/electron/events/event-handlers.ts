@@ -4,6 +4,7 @@ import {
   NotificationItem,
   NotificationService,
 } from "../io/notification-service.js";
+import { escape } from "../utils/file-name-util.js";
 
 import getLogger from "../logger.js";
 import { modifyGlobalBringUpWindowShortcut } from "./glabol-event-handlers.js";

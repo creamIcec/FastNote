@@ -1,6 +1,6 @@
 import { app, BrowserWindow, Menu, nativeImage, Tray } from "electron";
 import path from "path";
-import { isDev } from "../util.js";
+import { isDev } from "../environment-util.js";
 
 import GetLogger from "../logger.js";
 const logger = GetLogger(import.meta.url);
