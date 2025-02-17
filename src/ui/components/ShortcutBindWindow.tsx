@@ -12,7 +12,6 @@ export default function ShortcutBindWindow({
   stopKeyBinding: () => void;
 }) {
   const keyBindingInputRef = useRef(null);
-
   const [keys, setKeys] = useState<string[]>([]);
 
   const appendKeyToSeries = useCallback(

@@ -8,4 +8,5 @@
   height: 100%;
   --md-outlined-field-content-font: "SarasaMonoSC", system-ui;
   --md-outlined-field-outline-width: 0px;
+  resize: none;
 }

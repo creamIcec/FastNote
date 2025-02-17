@@ -8,7 +8,7 @@ import {
 
 export type Theme = "light" | "system" | "dark";
 
-export const DEFAULT_COLOR = "#63A002";
+export const DEFAULT_COLOR = "#0079AD";
 
 export function initTheme() {
   const theme = localStorage.getItem("theme");
@@ -42,11 +42,11 @@ export function changeColor(newColor: string) {
 export function changeTheme(newTheme: Theme) {
   //如果没有指定具体的theme, 则用户倾向初始化
   // Get the theme from a hex color
-  //好看的颜色: #F8A041
+  //some beautiful colors to choose between: #F8A041
   //#B50061
   //#7B00F3
 
-  const color = localStorage.getItem("sourceColor") || "#006954";
+  const color = localStorage.getItem("sourceColor") || "#63A002";
   const theme = themeFromSourceColor(argbFromHex(color), [
     {
       name: "highlight",

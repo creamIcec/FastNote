@@ -26,18 +26,8 @@ export default function SideBar({
   const [deletedCount, setDeletedCount] = useState(0);
   const [setTitle] = useTitle(useShallow((state) => [state.setTitle]));
   const [content] = useContent(useShallow((state) => [state.content]));
-  const [
-    attemptDeleteName,
-    setAttemptDeleteName,
-    attemptDeleteContent,
-    setAttemptDeleteContent,
-  ] = useAttemptDelete(
-    useShallow((state) => [
-      state.name,
-      state.setName,
-      state.content,
-      state.setContent,
-    ])
+  const [setAttemptDeleteName, setAttemptDeleteContent] = useAttemptDelete(
+    useShallow((state) => [state.setName, state.setContent])
   );
 
   const handleClose = () => {

@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import {
   MdCheckbox,
   MdElevatedCard,
   MdFilledButton,
-  MdFilledCard,
   MdIcon,
   MdIconButton,
   MdOutlinedButton,
@@ -21,15 +20,13 @@ import {
   scheduleNotification,
   setNewShortcut,
 } from "../../actions/api";
-import { useContent, useTitle } from "../../states/content-state";
+import { useContent } from "../../states/content-state";
 import { useSidebarState } from "../../states/sidebar-state";
 import { useThemeState } from "../../states/theme-state";
-import { getCurrentHour, getCurrentMinute } from "../../utils/datetime";
 import { changeTheme } from "../../utils/theme";
-import styles from "./appBar.module.css";
-import WindowBlockComponentWrapper from "../WindowBlockComponentWrapper";
-import { isCharacterKey, isFunctionKeyDuplicated } from "../../utils/keyboard";
 import ShortcutBindWindow from "../ShortcutBindWindow";
+import WindowBlockComponentWrapper from "../WindowBlockComponentWrapper";
+import styles from "./appBar.module.css";
 
 export default function AppBar({
   title,
@@ -53,10 +50,6 @@ export default function AppBar({
 
   const [content] = useContent(useShallow((state) => [state.content]));
   const [isModifyKeyBinding, setIsModifyKeyBinding] = useState(false);
-
-  const [value, onTimeChange] = useState(
-    `${getCurrentHour()}:${getCurrentMinute()}`
-  );
 
   const handleOpenSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
