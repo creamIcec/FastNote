@@ -25,4 +25,8 @@ interface Window {
       content: string
     ) => Promise<boolean>;
   };
+
+  shortcutService: {
+    modifyGlobalBringUpWindowShortcut: (shortcut?: string[]) => boolean;
+  };
 }

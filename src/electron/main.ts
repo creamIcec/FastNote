@@ -15,8 +15,9 @@ import { initializeTray, registerTrayClickEvent } from "./native/tray.js";
 import { showWindow, toggleWindow } from "./actions/window-actions.js";
 import { NoteService } from "./io/note-service.js";
 import { NotificationService } from "./io/notification-service.js";
+import { ConfigManager } from "./io/config-manager.js";
 
-app.on("ready", () => {
+app.on("ready", async () => {
   const mainWindow = new BrowserWindow({
     width: 512,
     height: 650,
@@ -46,6 +47,9 @@ app.on("ready", () => {
   } else {
     mainWindow.loadFile(path.join(app.getAppPath(), "/dist-react/index.html"));
   }
+
+  //创建配置管理器
+  await ConfigManager.createConfigManager();
 
   //注册所有窗口控制事件监听
   registryWindowEventHandlers(mainWindow);

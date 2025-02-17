@@ -6,6 +6,7 @@ import {
 } from "../io/notification-service.js";
 
 import getLogger from "../logger.js";
+import { modifyGlobalBringUpWindowShortcut } from "./glabol-event-handlers.js";
 const logger = getLogger(import.meta.url);
 
 export function registryWindowEventHandlers(window: BrowserWindow) {
@@ -151,6 +152,12 @@ export function registerDataEventHandlers(noteService: NoteService) {
       }
       return result.payload;
     } catch (e) {}
+  });
+
+  ipcMain.handle("shortcut:applyShortcut", (event, shortcut?: string[]) => {
+    const accelerator = shortcut ? shortcut.join("+") : undefined;
+    const result = modifyGlobalBringUpWindowShortcut(accelerator);
+    return result;
   });
 }
 

@@ -32,3 +32,8 @@ electron.contextBridge.exposeInMainWorld("notificationService", {
   scheduleNotification: (delay: number, name: string, content: string) =>
     electron.ipcRenderer.invoke("notification:set", delay, name, content),
 });
+
+electron.contextBridge.exposeInMainWorld("shortcutService", {
+  modifyGlobalBringUpWindowShortcut: (shortcut?: string[]) =>
+    electron.ipcRenderer.invoke("shortcut:applyShortcut", shortcut),
+});

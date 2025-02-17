@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@material/material-color-utilities": "^0.3.0",
+    "ajv": "^6.12.6",
     "clsx": "^2.1.1",
     "cross-env": "^7.0.3",
     "framer-motion": "^11.11.11",

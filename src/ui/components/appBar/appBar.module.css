@@ -57,32 +57,23 @@
   --md-outlined-text-field-bottom-space: 4px;
 }
 
-.title-text {
+.theme-text {
   color: var(--text-color);
 }
 
-.time-picker-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: linear-gradient(0deg, #000000 0%, transparent 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
+.theme-text-small {
+  color: var(--text-color);
+  font-size: 12px;
 }
 
-.time-picker-action-container {
+.block-container-action-container {
   margin-top: auto;
   display: flex;
   flex-direction: row;
   column-gap: 8px;
 }
 
-.time-picker-input-wrapper {
+.block-container-input-wrapper {
   flex: 1 0 auto;
   display: flex;
   flex-direction: column;
@@ -91,7 +82,7 @@
   row-gap: 4px;
 }
 
-.time-picker-title {
+.block-container-title {
   padding: 8px;
 }
 
@@ -112,8 +103,29 @@
   align-items: center;
   justify-content: center;
   padding: 8px;
+  --md-elevated-card-container-color: var(--md-sys-color-secondary-container);
 }
 
-.time-picker-action-button {
+.dialog-action-button {
+  width: 128px;
+}
+
+.dialog-action-button-small {
   width: 96px;
+}
+
+.key-bind-input {
+  width: 192px;
+  height: 48px;
+  border: none;
+  border-radius: 24px;
+  padding: 12px;
+  font-size: 16px;
+  text-align: center;
+  color: var(--text-color);
+}
+
+::placeholder {
+  opacity: 1;
+  color: var(--text-color);
 }

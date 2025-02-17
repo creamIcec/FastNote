@@ -71,6 +71,10 @@ export async function scheduleNotification(
   );
 }
 
+export function setNewShortcut(shortcut?: string[]) {
+  return window.shortcutService.modifyGlobalBringUpWindowShortcut(shortcut);
+}
+
 // 最小化窗口
 export function minimizeWindow() {
   window.windowControl.minimize();

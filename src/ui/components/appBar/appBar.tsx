@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import {
   MdCheckbox,
   MdElevatedCard,
   MdFilledButton,
+  MdFilledCard,
   MdIcon,
   MdIconButton,
   MdOutlinedButton,
@@ -18,6 +19,7 @@ import {
   renameNote,
   saveToExternalFile,
   scheduleNotification,
+  setNewShortcut,
 } from "../../actions/api";
 import { useContent, useTitle } from "../../states/content-state";
 import { useSidebarState } from "../../states/sidebar-state";
@@ -25,6 +27,8 @@ import { useThemeState } from "../../states/theme-state";
 import { getCurrentHour, getCurrentMinute } from "../../utils/datetime";
 import { changeTheme } from "../../utils/theme";
 import styles from "./appBar.module.css";
+import WindowBlockComponentWrapper from "../WindowBlockComponentWrapper";
+import { isCharacterKey, isFunctionKeyDuplicated } from "../../utils/keyboard";
 
 export default function AppBar({ title }: { title: string }) {
   const [isSidebarOpen, setIsSidebarOpen] = useSidebarState(
@@ -32,11 +36,14 @@ export default function AppBar({ title }: { title: string }) {
   );
 
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
+  const [isModifyKeyBinding, setIsModifyKeyBinding] = useState(false);
 
   const [setTitle] = useTitle(useShallow((state) => [state.setTitle]));
 
   const titleRef = useRef<MdOutlinedTextFieldElement>(null);
   const [isRenaming, setIsRenaming] = useState<boolean>(false);
+
+  const [keys, setKeys] = useState<string[]>([]);
 
   const [theme, setTheme, getNextTheme] = useThemeState(
     useShallow((state) => [state.theme, state.setTheme, state.getNextTheme])
@@ -59,6 +66,100 @@ export default function AppBar({ title }: { title: string }) {
   const handleMaximize = () => {
     maximizeWindow();
   };
+
+  const handleBindKey = (e: any) => {
+    if (isModifyKeyBinding) {
+      e.preventDefault();
+      return;
+    }
+    console.log("用户打开修改按键界面");
+    setIsModifyKeyBinding(!isModifyKeyBinding);
+  };
+
+  const appendKeyToSeries = useCallback(
+    (e: KeyboardEvent) => {
+      //1. 用户按下一个键
+      //2. 判断是否符合规则, 符合则添加到序列中
+      //3. 当用户按下不带任何修饰键的Enter后, 注册刚刚按下的新按键序列; 当用户按下Esc或鼠标点击输入区域以外的地方后, 退出修改流程
+      //4. 结束
+      e.preventDefault();
+      if (e.repeat) {
+        return;
+      }
+      const key = e.code === "Space" ? "Space" : e.key;
+      if (key === "Escape") {
+        setIsModifyKeyBinding(false);
+        return;
+      }
+      const input = keyBindingInputRef.current as unknown as HTMLInputElement;
+      if (!input) {
+        console.warn("无法获取到按键绑定输入框");
+        return;
+      }
+
+      const lastKey = keys.at(-1);
+      let rebind = false;
+
+      if (isCharacterKey(lastKey) || lastKey === "Space") {
+        input.value = "";
+        rebind = true;
+      }
+
+      if (isFunctionKeyDuplicated([...keys, key])) {
+        input.value = "";
+        rebind = true;
+      }
+
+      if (input.value !== "") {
+        input.value += "+";
+      }
+
+      input.value += key;
+      if (rebind) {
+        setKeys([key]);
+      } else {
+        setKeys([...keys, key]);
+      }
+    },
+    [keys]
+  );
+
+  const tryApplyShortcut = useCallback(
+    (e: KeyboardEvent) => {
+      if (!isModifyKeyBinding) {
+        return;
+      }
+      e.preventDefault();
+      applyShortcut(keys);
+    },
+    [keys]
+  );
+
+  //如果传入的shortcut为空, 则恢复原始快捷键; 否则设置shortcut为快捷键
+  const applyShortcut = (shortcut?: string[]) => {
+    const result = setNewShortcut(shortcut);
+    if (result) {
+      console.log("设置新快捷键成功");
+    } else {
+      console.warn("设置新快捷键失败");
+    }
+    setIsModifyKeyBinding(false);
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", appendKeyToSeries);
+    document.addEventListener("keyup", tryApplyShortcut);
+    return () => {
+      document.removeEventListener("keydown", appendKeyToSeries);
+      document.removeEventListener("keyup", tryApplyShortcut);
+    };
+  }, [appendKeyToSeries]);
+
+  useEffect(() => {
+    if (!isModifyKeyBinding) {
+      setKeys([]);
+    }
+  }, [isModifyKeyBinding]);
 
   const handleHide = () => {
     hideWindow();
@@ -191,18 +292,21 @@ export default function AppBar({ title }: { title: string }) {
   };
 
   const timePickerRef = useRef(null);
+  const keyBindingInputRef = useRef(null);
   const contentUseRef = useRef(null);
 
   return (
     <header className={styles.header}>
       {isTimePickerOpen && (
-        <div className={styles["time-picker-container"]}>
+        <WindowBlockComponentWrapper>
           <MdElevatedCard className={styles.dialog}>
-            <div className={styles["time-picker-title"]}>
-              <h3>设置一个提醒时刻</h3>
-              <p>到达这个时刻之后, 应用将会通知提醒你哦</p>
+            <div className={styles["block-container-title"]}>
+              <h3 className={styles["theme-text"]}>设置一个提醒时刻</h3>
+              <p className={styles["theme-text"]}>
+                到达这个时刻之后, 应用将会通知提醒你哦
+              </p>
             </div>
-            <div className={styles["time-picker-input-wrapper"]}>
+            <div className={styles["block-container-input-wrapper"]}>
               <input
                 aria-label="Time"
                 type="time"
@@ -218,22 +322,50 @@ export default function AppBar({ title }: { title: string }) {
                 以笔记内容作为提醒内容
               </label>
             </div>
-            <div className={styles["time-picker-action-container"]}>
+            <div className={styles["block-container-action-container"]}>
               <MdOutlinedButton
-                className={styles["time-picker-action-button"]}
+                className={styles["dialog-action-button-small"]}
                 onClick={cancelScheduleNotification}
               >
                 取消
               </MdOutlinedButton>
               <MdFilledButton
-                className={styles["time-picker-action-button"]}
+                className={styles["dialog-action-button-small"]}
                 onClick={handleScheduleNotification}
               >
                 确定
               </MdFilledButton>
             </div>
           </MdElevatedCard>
-        </div>
+        </WindowBlockComponentWrapper>
+      )}
+      {isModifyKeyBinding && (
+        <WindowBlockComponentWrapper>
+          <MdElevatedCard className={styles.dialog}>
+            <div className={styles["block-container-title"]}>
+              <h3 className={styles["theme-text"]}>设置新的全局唤起快捷键</h3>
+              <p className={styles["theme-text"]}>
+                按下快捷键快速显示/隐藏应用
+              </p>
+            </div>
+            <div className={styles["block-container-input-wrapper"]}>
+              <input
+                type="text"
+                ref={keyBindingInputRef}
+                className={styles["key-bind-input"]}
+                disabled
+                placeholder="按下按键组合..."
+              />
+              <MdOutlinedButton
+                className={styles["dialog-action-button"]}
+                onClick={(e) => applyShortcut()}
+              >
+                还原原始快捷键
+              </MdOutlinedButton>
+            </div>
+            <div className={styles["block-container-action-container"]}></div>
+          </MdElevatedCard>
+        </WindowBlockComponentWrapper>
       )}
       <div className={styles["operations-container"]}>
         <div className={styles["start-container"]}>
@@ -251,6 +383,12 @@ export default function AppBar({ title }: { title: string }) {
           </MdIconButton>
         </div>
         <div className={styles["tail-container"]}>
+          <MdIconButton
+            className={styles["window-icon"]}
+            onClick={handleBindKey}
+          >
+            <MdIcon>keyboard_keys</MdIcon>
+          </MdIconButton>
           <MdIconButton
             className={styles["window-icon"]}
             onClick={handleMinimize}
@@ -278,7 +416,7 @@ export default function AppBar({ title }: { title: string }) {
             className={styles["title-input"]}
           />
         ) : (
-          <p className={styles["title-text"]}>{title}</p>
+          <p className={styles["theme-text"]}>{title}</p>
         )}
       </div>
     </header>
