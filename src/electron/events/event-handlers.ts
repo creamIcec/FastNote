@@ -10,7 +10,7 @@ import getLogger from "../logger.js";
 import { modifyGlobalBringUpWindowShortcut } from "./glabol-event-handlers.js";
 const logger = getLogger(import.meta.url);
 
-export function registryWindowEventHandlers(window: BrowserWindow) {
+export function registerWindowEventHandlers(window: BrowserWindow) {
   ipcMain.handle("minimize", () => {
     logger.info("窗口最小化");
     window.minimize();
@@ -32,6 +32,12 @@ export function registerWindowCloseEventHandler(window: BrowserWindow) {
   window.on("close", (event) => {
     event.preventDefault();
     window.hide();
+  });
+}
+
+export function registerWindowEventEmits(window: BrowserWindow) {
+  window.on("show", () => {
+    window.webContents.send("window:show");
   });
 }
 

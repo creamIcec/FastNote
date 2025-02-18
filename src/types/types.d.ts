@@ -5,6 +5,10 @@ interface Window {
     hide: () => void;
   };
 
+  windowEvents: {
+    onWindowShow: (callback: () => void) => void;
+  };
+
   noteService: {
     saveNote: (name: string, content: string) => Promise<boolean>;
     readNote: (name: string) => Promise<string> | Promise<undefined>;

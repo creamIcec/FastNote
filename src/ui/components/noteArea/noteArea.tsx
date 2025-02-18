@@ -4,7 +4,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import lodash from "lodash";
 import { useTypingState } from "../../states/note-saved-state";
 import { useShallow } from "zustand/shallow";
-import { readNote, saveNote, saveRecentNoteName } from "../../actions/api";
+import {
+  readNote,
+  registerOnWindowShowHandler,
+  saveNote,
+  unregisterOnWindowShowHandler,
+} from "../../actions/api";
 import {
   DEFAULT_NEW_NOTE_CONTENT,
   INDICATOR_REFRESH_INTERVAL,
@@ -20,6 +25,17 @@ export default function NoteArea({ title }: { title: string }) {
   const [setIsSaved] = useTypingState(
     useShallow((state) => [state.setIsSaved])
   );
+
+  useEffect(() => {
+    registerOnWindowShowHandler(() => {
+      const textarea = textareaRef.current! as HTMLTextAreaElement;
+      textarea.focus();
+    });
+
+    return () => {
+      unregisterOnWindowShowHandler();
+    };
+  }, []);
 
   useEffect(() => {
     //应用加载(或内容改变)时获取笔记保存的内容

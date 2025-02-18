@@ -1,9 +1,14 @@
-import electron, { ipcMain } from "electron";
+import electron, { ipcMain, ipcRenderer } from "electron";
 // 暴露窗口操作到渲染进程
 electron.contextBridge.exposeInMainWorld("windowControl", {
   minimize: () => electron.ipcRenderer.invoke("minimize"),
   maximize: () => electron.ipcRenderer.invoke("maximize"),
   hide: () => electron.ipcRenderer.invoke("hide"),
+});
+
+electron.contextBridge.exposeInMainWorld("windowEvents", {
+  onWindowShow: (callback: () => void) =>
+    ipcRenderer.on("window:show", (event, value) => callback()),
 });
 
 //暴露数据操作到渲染进程

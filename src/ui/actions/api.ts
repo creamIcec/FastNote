@@ -90,5 +90,11 @@ export function hideWindow() {
   window.windowControl.hide();
 }
 
-//TODO: 托盘显示图标
-// 显示窗口
+// 当显示窗口后触发
+export function registerOnWindowShowHandler(callback: () => void) {
+  window.windowEvents.onWindowShow(callback);
+}
+
+export function unregisterOnWindowShowHandler() {
+  window.windowEvents.onWindowShow(() => {}); //TODO: real unregister(support multiple handlers)
+}

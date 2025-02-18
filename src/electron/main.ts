@@ -5,7 +5,8 @@ import {
   registerDataEventHandlers,
   registerNotificationEventHandlers,
   registerWindowCloseEventHandler,
-  registryWindowEventHandlers,
+  registerWindowEventEmits,
+  registerWindowEventHandlers,
 } from "./events/event-handlers.js";
 import {
   registerGlobalBringUpWindowShortCut,
@@ -52,7 +53,10 @@ app.on("ready", async () => {
   await ConfigManager.createConfigManager();
 
   //注册所有窗口控制事件监听
-  registryWindowEventHandlers(mainWindow);
+  registerWindowEventHandlers(mainWindow);
+
+  //注册所有窗口发出事件监听
+  registerWindowEventEmits(mainWindow);
 
   //注册所有数据处理事件监听
   registerDataEventHandlers(noteService);

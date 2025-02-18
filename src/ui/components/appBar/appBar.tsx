@@ -82,6 +82,15 @@ export default function AppBar({
 
   useEffect(() => {
     console.log("工具栏已检测到标题变化");
+    Mousetrap.bind(["ctrl+s", "command+s"], () => {
+      console.log("快捷键触发保存");
+      handleSaveExternal();
+      return false;
+    });
+
+    return () => {
+      Mousetrap.unbind(["ctrl+s", "command+s"]);
+    };
   }, [title]);
 
   const handleHide = () => {
@@ -168,15 +177,8 @@ export default function AppBar({
   useEffect(() => {
     document.addEventListener("mousedown", handleRenameByClickOutside);
 
-    Mousetrap.bind(["ctrl+s", "command+s"], () => {
-      console.log("快捷键触发保存");
-      handleSaveExternal();
-      return false;
-    });
-
     return () => {
       document.removeEventListener("mousedown", handleRenameByClickOutside);
-      Mousetrap.unbind(["ctrl+s", "command+s"]);
     };
   }, []);
 
