@@ -29,7 +29,7 @@ function App() {
   useEffect(() => {
     //应用加载时获取之前笔记的标题
     fetchAndSetPrevTitle();
-  }, []);
+  }, [fetchAndSetPrevTitle]);
 
   useEffect(() => {
     initTheme();
@@ -40,7 +40,7 @@ function App() {
     console.log(`标题发生改变:${title}`);
     if (title) {
       const saveRecentTitle = async () => {
-        const _ = await saveRecentNoteName(title);
+        await saveRecentNoteName(title);
       };
       saveRecentTitle();
     }

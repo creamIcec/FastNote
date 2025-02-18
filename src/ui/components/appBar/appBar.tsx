@@ -1,12 +1,9 @@
+import Mousetrap from "mousetrap";
 import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import {
-  MdCheckbox,
-  MdElevatedCard,
-  MdFilledButton,
   MdIcon,
   MdIconButton,
-  MdOutlinedButton,
   MdOutlinedTextField,
   MdOutlinedTextFieldElement,
 } from "react-material-web";
@@ -16,6 +13,7 @@ import {
   maximizeWindow,
   minimizeWindow,
   renameNote,
+  saveNote,
   saveToExternalFile,
   scheduleNotification,
   setNewShortcut,
@@ -24,10 +22,9 @@ import { useContent } from "../../states/content-state";
 import { useSidebarState } from "../../states/sidebar-state";
 import { useThemeState } from "../../states/theme-state";
 import { changeTheme } from "../../utils/theme";
-import ShortcutBindWindow from "../ShortcutBindWindow";
-import WindowBlockComponentWrapper from "../WindowBlockComponentWrapper";
+import NotificationSettingWindow from "../dialogs/NotificationSettingWindow";
+import ShortcutBindWindow from "../dialogs/ShortcutBindWindow";
 import styles from "./appBar.module.css";
-import Mousetrap from "mousetrap";
 
 export default function AppBar({
   title,
@@ -64,7 +61,7 @@ export default function AppBar({
     maximizeWindow();
   };
 
-  const handleBindKey = (e: any) => {
+  const handleBindKey = () => {
     console.log("用户打开修改按键界面");
     setIsModifyKeyBinding(!isModifyKeyBinding);
   };
@@ -74,24 +71,41 @@ export default function AppBar({
     const result = setNewShortcut(shortcut);
     if (result) {
       console.log("设置新快捷键成功");
+      toast.success(
+        () => (
+          <div className={styles.toast}>
+            {shortcut ? (
+              <>
+                成功设置快捷键:
+                <br />
+                {shortcut.join("+")}
+              </>
+            ) : (
+              "恢复原始快捷键"
+            )}
+          </div>
+        ),
+        {
+          duration: 2000,
+          style: {
+            borderRadius: "24px",
+            background: "var(--md-sys-color-tertiary-container, #333)",
+          },
+        }
+      );
     } else {
       console.warn("设置新快捷键失败");
+      toast.error(() => <div className={styles.toast}>设置新快捷键失败</div>, {
+        duration: 2000,
+        style: {
+          borderRadius: "24px",
+          background: "var(--md-sys-color-error-container, #333)",
+          color: "var(--text-color)",
+        },
+      });
     }
     setIsModifyKeyBinding(false);
   };
-
-  useEffect(() => {
-    console.log("工具栏已检测到标题变化");
-    Mousetrap.bind(["ctrl+s", "command+s"], () => {
-      console.log("快捷键触发保存");
-      handleSaveExternal();
-      return false;
-    });
-
-    return () => {
-      Mousetrap.unbind(["ctrl+s", "command+s"]);
-    };
-  }, [title]);
 
   const handleHide = () => {
     hideWindow();
@@ -100,10 +114,12 @@ export default function AppBar({
   const handleSaveExternal = useCallback(async () => {
     let result: string | undefined;
     try {
+      //assume content in database is up to date with that in textarea
+      await saveNote(title, content);
       result = await saveToExternalFile(title);
       if (result) {
         toast.success(
-          (t) => (
+          () => (
             <div className={styles.toast}>
               成功保存到:
               <br />
@@ -121,9 +137,9 @@ export default function AppBar({
       }
     } catch (e) {
       toast.error(
-        (t) => (
+        () => (
           <div className={styles.toast}>
-            保存失败, 可能是取消了
+            保存失败: {(e as Error).message}
             <br /> {result}
           </div>
         ),
@@ -136,7 +152,7 @@ export default function AppBar({
         }
       );
     }
-  }, [title]);
+  }, [title, content]);
 
   const handleRenameAttempt = useCallback(() => {
     setIsRenaming(true);
@@ -153,7 +169,7 @@ export default function AppBar({
       setIsRenaming(false);
       setTitle(newTitle);
     }
-  }, [title]);
+  }, [title, setIsRenaming, setTitle]);
 
   const handleRenameByKey = useCallback(
     async (e: React.KeyboardEvent) => {
@@ -161,17 +177,20 @@ export default function AppBar({
         rename();
       }
     },
-    [title]
+    [rename]
   );
 
   const handleRenameByClickOutside = useCallback(
-    (event: any) => {
-      if (titleRef.current && !titleRef.current.contains(event.target)) {
+    (event: MouseEvent) => {
+      if (
+        titleRef.current &&
+        !titleRef.current.contains(event.target as Node)
+      ) {
         titleRef.current.blur();
         rename();
       }
     },
-    [title]
+    [rename]
   );
 
   useEffect(() => {
@@ -180,7 +199,19 @@ export default function AppBar({
     return () => {
       document.removeEventListener("mousedown", handleRenameByClickOutside);
     };
-  }, []);
+  }, [handleRenameByClickOutside]);
+
+  useEffect(() => {
+    Mousetrap.bind(["ctrl+s", "command+s"], () => {
+      console.log("快捷键触发保存");
+      handleSaveExternal();
+      return false;
+    });
+
+    return () => {
+      Mousetrap.unbind(["ctrl+s", "command+s"]);
+    };
+  }, [handleSaveExternal]);
 
   const getThemeIcon = () => {
     switch (theme) {
@@ -220,6 +251,10 @@ export default function AppBar({
     setIsTimePickerOpen(false);
   };
 
+  const stopKeyBinding = () => {
+    setIsModifyKeyBinding(false);
+  };
+
   const cancelScheduleNotification = () => {
     setIsTimePickerOpen(false);
   };
@@ -230,51 +265,15 @@ export default function AppBar({
   return (
     <header className={styles.header}>
       {isTimePickerOpen && (
-        <WindowBlockComponentWrapper>
-          <MdElevatedCard className={styles.dialog}>
-            <div className={styles["block-container-title"]}>
-              <h3 className={styles["theme-text"]}>设置一个提醒时刻</h3>
-              <p className={styles["theme-text"]}>
-                到达这个时刻之后, 应用将会通知提醒你哦
-              </p>
-            </div>
-            <div className={styles["block-container-input-wrapper"]}>
-              <input
-                aria-label="Time"
-                type="time"
-                className={styles["time-picker"]}
-                ref={timePickerRef}
-              />
-              <label>
-                <MdCheckbox
-                  touch-target="wrapper"
-                  checked
-                  ref={contentUseRef}
-                ></MdCheckbox>
-                以笔记内容作为提醒内容
-              </label>
-            </div>
-            <div className={styles["block-container-action-container"]}>
-              <MdOutlinedButton
-                className={styles["dialog-action-button-small"]}
-                onClick={cancelScheduleNotification}
-              >
-                取消
-              </MdOutlinedButton>
-              <MdFilledButton
-                className={styles["dialog-action-button-small"]}
-                onClick={handleScheduleNotification}
-              >
-                确定
-              </MdFilledButton>
-            </div>
-          </MdElevatedCard>
-        </WindowBlockComponentWrapper>
+        <NotificationSettingWindow
+          onSet={handleScheduleNotification}
+          onCancel={cancelScheduleNotification}
+        ></NotificationSettingWindow>
       )}
       {isModifyKeyBinding && (
         <ShortcutBindWindow
           applyShortcutCallback={applyShortcut}
-          stopKeyBinding={() => setIsModifyKeyBinding(false)}
+          stopKeyBinding={stopKeyBinding}
         ></ShortcutBindWindow>
       )}
       <div className={styles["operations-container"]}>

@@ -43,7 +43,7 @@ export class ConfigManager {
     }
   }
 
-  private async validateJSON(json: any): Promise<boolean> {
+  private async validateJSON(json: unknown): Promise<boolean> {
     if (!json) {
       return false;
     }

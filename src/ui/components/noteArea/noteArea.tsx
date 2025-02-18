@@ -1,6 +1,6 @@
 import { MdOutlinedTextField } from "react-material-web";
 import styles from "./noteArea.module.css";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import lodash from "lodash";
 import { useTypingState } from "../../states/note-saved-state";
 import { useShallow } from "zustand/shallow";
@@ -37,6 +37,33 @@ export default function NoteArea({ title }: { title: string }) {
     };
   }, []);
 
+  const handleSaveThrottled = useCallback(
+    () =>
+      lodash.throttle(async (title: string, content: string) => {
+        console.log(`正在保存的笔记的标题:${title}`);
+        const isSaved = await saveNote(title, content);
+        setIsSaved(isSaved ? "saved" : "error");
+        if (isSaved) {
+          clearTimeout(timeoutIndicator.current);
+          const intervalId = setTimeout(() => {
+            setIsSaved("pending");
+          }, SAVE_NOTE_INTERVAL);
+          timeoutIndicator.current = intervalId;
+        }
+      }, INDICATOR_REFRESH_INTERVAL),
+    [setIsSaved]
+  );
+
+  const handleInput = useCallback(
+    (e: Event) => {
+      const event = e as InputEvent;
+      const newContent = (event.target as HTMLInputElement).value;
+      setContent(newContent);
+      handleSaveThrottled(title, newContent);
+    },
+    [title, setContent, handleSaveThrottled]
+  );
+
   useEffect(() => {
     //应用加载(或内容改变)时获取笔记保存的内容
     const fetchNote = async () => {
@@ -62,33 +89,7 @@ export default function NoteArea({ title }: { title: string }) {
     textarea.focus();
 
     return () => {};
-  }, [title]);
-
-  const handleSaveThrottled = lodash.throttle(
-    async (title: string, content: string) => {
-      console.log(`保存的标题:${title}`);
-      const isSaved = await saveNote(title, content);
-      setIsSaved(isSaved ? "saved" : "error");
-      if (isSaved) {
-        clearTimeout(timeoutIndicator.current);
-        const intervalId = setTimeout(() => {
-          setIsSaved("pending");
-        }, SAVE_NOTE_INTERVAL);
-        timeoutIndicator.current = intervalId;
-      }
-    },
-    INDICATOR_REFRESH_INTERVAL
-  );
-
-  const handleInput = useCallback(
-    (e: Event) => {
-      const event = e as InputEvent;
-      const newContent = (event.target as HTMLInputElement).value;
-      setContent(newContent);
-      handleSaveThrottled(title, newContent);
-    },
-    [title]
-  );
+  }, [title, handleSaveThrottled, setContent]);
 
   const textareaRef = useRef(null);
 

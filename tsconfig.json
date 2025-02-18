@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "types": ["./src/types/types.d.ts"],
+    "types": ["./src/types/types.d.ts", "./src/ui/types/types.d.ts"],
     "target": "ESNext",
     "useDefineForClassFields": true,
     "lib": ["ESNext", "DOM", "DOM.Iterable"],

@@ -34,11 +34,7 @@ export class NotificationService {
   //加入通知队列
   public enqueue(item: NotificationItem) {
     //如果不存在才加入
-    if (
-      !this.notificationQueue.find((i) => {
-        i.title === item.title;
-      })
-    ) {
+    if (!this.notificationQueue.find((i) => i.title === item.title)) {
       this.notificationQueue.push(item);
       setTimeout(() => {
         nativeSendNotification(item);

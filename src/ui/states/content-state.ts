@@ -20,7 +20,7 @@ export interface AttemptDelete {
   setContent: (newContent: string | undefined) => void;
 }
 
-export const useContent = create<Content>((set, get) => ({
+export const useContent = create<Content>((set) => ({
   content: "",
   setContent: (newContent) =>
     set((prev) => ({
@@ -29,7 +29,7 @@ export const useContent = create<Content>((set, get) => ({
     })),
 }));
 
-export const useAttemptDelete = create<AttemptDelete>((set, get) => ({
+export const useAttemptDelete = create<AttemptDelete>((set) => ({
   name: undefined,
   content: undefined,
   setName: (newName) =>
@@ -44,7 +44,7 @@ export const useAttemptDelete = create<AttemptDelete>((set, get) => ({
     })),
 }));
 
-export const useTitle = create<Title>((set, get) => ({
+export const useTitle = create<Title>((set) => ({
   title: undefined,
   setTitle: (newTitle) =>
     set((prev) => ({

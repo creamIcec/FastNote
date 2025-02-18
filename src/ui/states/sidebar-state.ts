@@ -5,7 +5,7 @@ export interface SidebarState {
   setIsOpen: (isOpen: boolean) => void;
 }
 
-export const useSidebarState = create<SidebarState>((set, get) => ({
+export const useSidebarState = create<SidebarState>((set) => ({
   isOpen: false,
   setIsOpen: (isOpen: boolean) =>
     set((prev) => ({

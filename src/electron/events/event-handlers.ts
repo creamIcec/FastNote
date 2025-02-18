@@ -4,7 +4,6 @@ import {
   NotificationItem,
   NotificationService,
 } from "../io/notification-service.js";
-import { escape } from "../utils/file-name-util.js";
 
 import getLogger from "../logger.js";
 import { modifyGlobalBringUpWindowShortcut } from "./glabol-event-handlers.js";
@@ -57,11 +56,11 @@ export function registerDataEventHandlers(noteService: NoteService) {
 
   ipcMain.handle("note:read", async (event, name: string) => {
     const content = await noteService.readFromNote(name);
-    logger.info(`读取内容:${content}`);
+    logger.info(`成功读取笔记内容`);
     return content !== undefined ? content : undefined;
   });
 
-  ipcMain.handle("note:saveExternal", async (event, name: string) => {
+  ipcMain.handle("note:saveExternal", async (_, name: string) => {
     try {
       const result = await noteService.saveToExternalFile(name);
       if (result && result.state) {
@@ -89,7 +88,7 @@ export function registerDataEventHandlers(noteService: NoteService) {
     }
   );
 
-  ipcMain.handle("note:readRecentTitle", async (event) => {
+  ipcMain.handle("note:readRecentTitle", async () => {
     const name = await noteService.readRecentTitle();
     if (name) {
       return name;
@@ -98,11 +97,16 @@ export function registerDataEventHandlers(noteService: NoteService) {
   });
 
   ipcMain.handle("note:saveRecentTitle", async (event, name) => {
-    const result = await noteService.saveRecentTitle(name);
-    if (result && result === "success") {
-      return true;
+    try {
+      const result = await noteService.saveRecentTitle(name);
+      if (result && result.state) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      logger.error(`保存最近标题失败: ${(e as Error).message}`);
+      return false;
     }
-    return false;
   });
 
   ipcMain.handle("note:create", async (event, name) => {
@@ -121,7 +125,7 @@ export function registerDataEventHandlers(noteService: NoteService) {
     }
   });
 
-  ipcMain.handle("notelist:read", async (event) => {
+  ipcMain.handle("notelist:read", async () => {
     try {
       const list = await noteService.readNoteList();
       logger.info(`笔记列表:${list}`);
@@ -135,7 +139,7 @@ export function registerDataEventHandlers(noteService: NoteService) {
     }
   });
 
-  ipcMain.handle("note:delete", async (event, name) => {
+  ipcMain.handle("note:delete", async (_, name) => {
     try {
       //不存在这个笔记, 无需删除
       if (!(await noteService.exists(name))) {
@@ -150,15 +154,17 @@ export function registerDataEventHandlers(noteService: NoteService) {
     }
   });
 
-  ipcMain.handle("note:readLastNameInList", async (event) => {
+  ipcMain.handle("note:readLastNameInList", async () => {
     try {
-      const result = (await noteService.readLastNameInList()) as any;
-      logger.info(`读取的列表中最后一项:${result}`);
-      if (!result.state) {
+      const result = await noteService.readLastNameInList();
+      if (!result || !result.state) {
         return undefined;
       }
+      logger.info(`读取的列表中最后一项:${result}`);
       return result.payload;
-    } catch (e) {}
+    } catch (e) {
+      logger.warn(`无法读取列表中的最后一项: ${e}`);
+    }
   });
 
   ipcMain.handle("shortcut:applyShortcut", (event, shortcut?: string[]) => {

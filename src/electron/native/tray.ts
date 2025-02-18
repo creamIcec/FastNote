@@ -21,7 +21,7 @@ export function initializeTray() {
     {
       label: "保持窗口置顶",
       type: "checkbox",
-      click: (menuItem, window, event) => {
+      click: (menuItem) => {
         logger.info(`置顶:${menuItem.checked}`);
         const _window = BrowserWindow.getAllWindows()[0];
         logger.info(_window);
@@ -31,7 +31,7 @@ export function initializeTray() {
     {
       label: "退出程序",
       type: "normal",
-      click: (menuItem, window, event) => {
+      click: (_, window) => {
         logger.info("退出程序");
         window?.close();
         process.exit(0);

@@ -24,7 +24,7 @@ export default function Footer() {
   const handleCopy = useCallback(() => {
     copyCurrentNoteContent(content).then(
       function () {
-        toast.success((t) => <div className={styles.toast}>复制成功!</div>, {
+        toast.success(() => <div className={styles.toast}>复制成功!</div>, {
           duration: 2000,
           style: {
             borderRadius: "24px",
@@ -35,7 +35,7 @@ export default function Footer() {
       },
       function () {
         toast.error(
-          (t) => (
+          () => (
             <div className={styles.toast}>复制出错了, 可能是系统不支持</div>
           ),
           {
@@ -58,7 +58,7 @@ export default function Footer() {
       setTitle(name);
       setContent("");
     }
-  }, []);
+  }, [setContent, setTitle]);
 
   const getSaveStateIndicator = () => {
     switch (isSaved) {
@@ -98,7 +98,7 @@ export default function Footer() {
       Mousetrap.unbind(["ctrl+n", "command+n"]);
       Mousetrap.unbind(["ctrl+alt+c", "command+option+c"]);
     };
-  }, []);
+  }, [handleCopy, handleCreateNote]);
 
   return (
     <footer className={styles.footer}>
