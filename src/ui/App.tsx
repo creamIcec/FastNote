@@ -14,6 +14,8 @@ import { useTitle } from "./states/content-state";
 import { useSidebarState } from "./states/sidebar-state";
 import { initColor, initTheme } from "./utils/theme";
 
+import "./lib/mousetrap_pause.js";
+
 function App() {
   const [isOpen] = useSidebarState(useShallow((state) => [state.isOpen]));
   const [title, setTitle, fetchAndSetPrevTitle] = useTitle(

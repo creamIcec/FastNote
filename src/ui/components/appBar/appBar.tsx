@@ -27,6 +27,7 @@ import { changeTheme } from "../../utils/theme";
 import ShortcutBindWindow from "../ShortcutBindWindow";
 import WindowBlockComponentWrapper from "../WindowBlockComponentWrapper";
 import styles from "./appBar.module.css";
+import Mousetrap from "mousetrap";
 
 export default function AppBar({
   title,
@@ -166,8 +167,16 @@ export default function AppBar({
 
   useEffect(() => {
     document.addEventListener("mousedown", handleRenameByClickOutside);
+
+    Mousetrap.bind(["ctrl+s", "command+s"], () => {
+      console.log("快捷键触发保存");
+      handleSaveExternal();
+      return false;
+    });
+
     return () => {
       document.removeEventListener("mousedown", handleRenameByClickOutside);
+      Mousetrap.unbind(["ctrl+s", "command+s"]);
     };
   }, []);
 

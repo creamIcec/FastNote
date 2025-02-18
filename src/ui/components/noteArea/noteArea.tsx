@@ -41,6 +41,10 @@ export default function NoteArea({ title }: { title: string }) {
     };
     fetchNote();
 
+    //切换笔记后, 自动聚焦输入框
+    const textarea = textareaRef.current! as HTMLTextAreaElement;
+    textarea.focus();
+
     return () => {};
   }, [title]);
 
@@ -70,11 +74,14 @@ export default function NoteArea({ title }: { title: string }) {
     [title]
   );
 
+  const textareaRef = useRef(null);
+
   return (
     <main className={styles["textarea-container"]}>
       <MdOutlinedTextField
+        ref={textareaRef}
         type="textarea"
-        className={styles.textarea}
+        className={[styles.textarea, "mousetrap"].join(" ")}
         onInput={handleInput}
         value={content}
       ></MdOutlinedTextField>

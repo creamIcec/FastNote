@@ -3,6 +3,7 @@ import WindowBlockComponentWrapper from "./WindowBlockComponentWrapper";
 import styles from "./ShortcutBindWindow.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { isCharacterKey, isFunctionKeyDuplicated } from "../utils/keyboard";
+import Mousetrap from "mousetrap";
 
 export default function ShortcutBindWindow({
   applyShortcutCallback,
@@ -80,6 +81,13 @@ export default function ShortcutBindWindow({
       console.log("关闭全局侦听");
     };
   }, [appendKeyToSeries]);
+
+  useEffect(() => {
+    (Mousetrap as any).pause(); //TODO: type definition
+    return () => {
+      (Mousetrap as any).unpause();
+    };
+  }, []);
 
   return (
     <WindowBlockComponentWrapper>
