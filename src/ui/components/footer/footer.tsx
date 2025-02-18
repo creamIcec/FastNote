@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import toast from "react-hot-toast";
 import { MdFab, MdIcon } from "react-material-web";
 import { useShallow } from "zustand/shallow";
@@ -12,6 +12,7 @@ import {
   getFormattedDateTime,
 } from "../../utils/datetime";
 import styles from "./footer.module.css";
+import Mousetrap from "mousetrap";
 
 export default function Footer() {
   const [isSaved] = useTypingState(useShallow((state) => [state.saveState]));
@@ -81,6 +82,23 @@ export default function Footer() {
         );
     }
   };
+
+  useEffect(() => {
+    Mousetrap.bind(["ctrl+n", "command+n"], () => {
+      console.log("快捷键触发新建");
+      handleCreateNote();
+    });
+
+    Mousetrap.bind(["ctrl+alt+c", "command+option+c"], () => {
+      console.log("快捷键触发复制内容");
+      handleCopy();
+    });
+
+    return () => {
+      Mousetrap.unbind(["ctrl+n", "command+n"]);
+      Mousetrap.unbind(["ctrl+alt+c", "command+option+c"]);
+    };
+  }, []);
 
   return (
     <footer className={styles.footer}>
