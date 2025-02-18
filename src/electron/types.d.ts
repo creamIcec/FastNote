@@ -1,4 +1,4 @@
 export type Msg = {
   state: boolean;
-  payload: string;
+  payload: string | undefined;
 };

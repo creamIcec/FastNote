@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Notification } from "electron";
+import { app, BrowserWindow } from "electron";
 import path from "path";
 import { getPreloadPath, isDebug, isDev } from "./environment-util.js";
 import {

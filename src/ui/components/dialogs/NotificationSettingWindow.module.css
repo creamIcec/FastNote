@@ -1,0 +1,56 @@
+.theme-text {
+  color: var(--text-color);
+}
+
+.theme-text-small {
+  color: var(--text-color);
+  font-size: 12px;
+}
+
+.block-container-action-container {
+  margin-top: auto;
+  display: flex;
+  flex-direction: row;
+  column-gap: 8px;
+}
+
+.block-container-input-wrapper {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 4px;
+}
+
+.block-container-title {
+  padding: 8px;
+}
+
+.time-picker {
+  width: 128px;
+  height: 32px;
+  border: none;
+  border-radius: 24px;
+  padding: 12px;
+  font-size: 16px;
+}
+
+.dialog {
+  width: 256px;
+  height: 212px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  --md-elevated-card-container-color: var(--md-sys-color-secondary-container);
+}
+
+.dialog-action-button {
+  width: 128px;
+}
+
+.dialog-action-button-small {
+  width: 96px;
+}

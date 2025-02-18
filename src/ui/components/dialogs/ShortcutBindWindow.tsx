@@ -2,8 +2,9 @@ import { MdElevatedCard, MdOutlinedButton } from "react-material-web";
 import WindowBlockComponentWrapper from "./WindowBlockComponentWrapper";
 import styles from "./ShortcutBindWindow.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { isCharacterKey, isFunctionKeyDuplicated } from "../utils/keyboard";
+import { isCharacterKey, isFunctionKeyDuplicated } from "../../utils/keyboard";
 import Mousetrap from "mousetrap";
+import toast from "react-hot-toast";
 
 export default function ShortcutBindWindow({
   applyShortcutCallback,
@@ -60,7 +61,7 @@ export default function ShortcutBindWindow({
         setKeys([...keys, key]);
       }
     },
-    [keys]
+    [keys, stopKeyBinding]
   );
 
   const tryApplyShortcut = useCallback(
@@ -68,7 +69,7 @@ export default function ShortcutBindWindow({
       e.preventDefault();
       applyShortcutCallback(keys);
     },
-    [keys]
+    [keys, applyShortcutCallback]
   );
 
   useEffect(() => {
@@ -80,13 +81,11 @@ export default function ShortcutBindWindow({
       document.removeEventListener("keyup", tryApplyShortcut);
       console.log("关闭全局侦听");
     };
-  }, [appendKeyToSeries]);
+  }, [appendKeyToSeries, tryApplyShortcut]);
 
   useEffect(() => {
-    (Mousetrap as any).pause(); //TODO: type definition
-    return () => {
-      (Mousetrap as any).unpause();
-    };
+    Mousetrap.pause(); //TODO: type definition
+    return () => Mousetrap.unpause();
   }, []);
 
   return (
@@ -106,7 +105,7 @@ export default function ShortcutBindWindow({
           />
           <MdOutlinedButton
             className={styles["dialog-action-button"]}
-            onClick={(e) => applyShortcutCallback()}
+            onClick={() => applyShortcutCallback()}
           >
             还原原始快捷键
           </MdOutlinedButton>

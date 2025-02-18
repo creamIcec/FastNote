@@ -126,7 +126,7 @@ function NoteItem({
   clickFunc?: (itemId: string) => void;
   removeFunc: (itemId: string) => void;
 }) {
-  const handleRemove = (e: any) => {
+  const handleRemove = (e: React.MouseEvent) => {
     //TODO: any
     e.stopPropagation();
     removeFunc(itemId);
@@ -144,7 +144,7 @@ function NoteItem({
       >
         {itemId}
         {isHovering && (
-          <MdIconButton slot="end" onClick={(e) => handleRemove(e)}>
+          <MdIconButton slot="end" onClick={handleRemove}>
             <MdIcon>delete</MdIcon>
           </MdIconButton>
         )}

@@ -1,7 +1,7 @@
 // 笔记i/o API -> CRUD
 import sqlite3 from "sqlite3";
 import { v4 as uuidv4 } from "uuid";
-import { ExternalSaveRecord, saveNativeFile } from "./fs-utils.js";
+import { saveNativeFile } from "./fs-utils.js";
 import { app } from "electron";
 import path from "path";
 
@@ -85,6 +85,43 @@ export class NoteService {
     this.db.run("DROP TABLE IF EXISTS recentNote");
   }
 
+  private async getNote(id: string) {
+    return new Promise<string>((resolve, reject) =>
+      this.db.get(
+        `SELECT * FROM note WHERE id = ?`,
+        [id],
+        (err, row: Note | undefined) => {
+          if (err) {
+            return reject(err);
+          }
+          if (!row) {
+            return reject(new Error("Note not found!"));
+          }
+          resolve(row.content);
+        }
+      )
+    );
+  }
+
+  private async insertToNote(
+    id: string,
+    createdTime: number,
+    initialContent: string
+  ) {
+    return new Promise((resolve, reject) =>
+      this.db.run(
+        `INSERT INTO note VALUES (?, ?, ?)`,
+        [id, createdTime, initialContent],
+        function (err) {
+          if (err) {
+            return reject(err.message);
+          }
+          resolve({ state: true, payload: undefined });
+        }
+      )
+    );
+  }
+
   //笔记ID -> 数据库中对应的项目
   //内部转换函数, 该函数不暴露
   private async getEntryIdByName(name: string) {
@@ -148,37 +185,19 @@ export class NoteService {
 
   //保存至外部文件
   public async saveToExternalFile(name: string) {
-    const escaped_name = escape(name);
-    if (!this.db) {
+    const escapedName = escape(name);
+    const id = await this.getEntryIdByName(name);
+    if (!id || !this.db || !(await this.exists(name))) {
       return;
     }
-    return new Promise<ExternalSaveRecord>(async (resolve, reject) => {
-      if (!(await this.exists(name))) {
-        return reject("Note does not exist, Please check if database exists.");
-      }
-      const id = await this.getEntryIdByName(name);
-      this.db.get(
-        `SELECT * FROM note WHERE id = ?`,
-        [id],
-        async (err, row: Note | undefined) => {
-          if (err) {
-            return reject(err.message);
-          }
-          if (!row) {
-            return reject(
-              "Note does not exist, Please check if database exists."
-            );
-          }
-          //保存
-          try {
-            const result = await saveNativeFile(escaped_name, row.content);
-            return resolve(result);
-          } catch (e) {
-            logger.log("保存到外部文件失败: ", e);
-          }
-        }
-      );
-    });
+    const noteContent = await this.getNote(id);
+    //保存
+    try {
+      const result = await saveNativeFile(escapedName, noteContent);
+      return result;
+    } catch (e) {
+      logger.log("保存到外部文件失败: ", e);
+    }
   }
 
   //读取笔记
@@ -191,7 +210,7 @@ export class NoteService {
       logger.warn(`不存在${name}, 返回undefined`);
       return undefined;
     }
-    logger.info(`存在${name}对应id: ${id}, 开始读取...`);
+    logger.info(`存在${name}对应id, 开始读取...`);
     return new Promise<string | undefined>((resolve, reject) => {
       this.db.get(
         `SELECT * FROM note WHERE id = ?`,
@@ -236,13 +255,13 @@ export class NoteService {
 
   //保存最近的笔记标题
   //在切换笔记时执行
-  public async saveRecentTitle(name: string) {
+  public async saveRecentTitle(name: string): Promise<Msg> {
     if (!this.db) {
-      return;
+      return { state: false, payload: "数据库未连接, 请尝试重启应用" };
     }
     const id = await this.getEntryIdByName(name);
     logger.info(`正在保存新的最近标题`);
-    return new Promise<string | undefined>((resolve, reject) => {
+    return new Promise<Msg>((resolve, reject) => {
       this.db.get(
         `UPDATE recentNote SET id = ?`,
         [id],
@@ -251,10 +270,10 @@ export class NoteService {
             return reject(err.message);
           }
           if (!row) {
-            return resolve(undefined);
+            return resolve({ state: false, payload: undefined });
           }
-          const name = await this.getNameById(row.id);
-          resolve("success");
+          await this.getNameById(row.id);
+          resolve({ state: true, payload: undefined });
         }
       );
     });
@@ -310,41 +329,31 @@ export class NoteService {
       });
       logger.info(`Successfully deleted note: ${name}`);
       return { state: true, payload: "success" };
-    } catch (error: any) {
-      logger.error(`Error deleting note: ${error.message}`);
-      return { state: false, payload: `Error occurred: ${error.message}` };
+    } catch (error) {
+      logger.error(`Error deleting note: ${error}`);
+      return { state: false, payload: `Error occurred: ${error}` };
     }
   }
 
   //创建新笔记
-  public async createNote(name: string) {
+  public async createNote(name: string): Promise<Msg> {
     if (!this.db) {
-      return;
+      return { state: false, payload: "数据库未连接, 请尝试重启应用" };
     }
     //检查重名
     if ((await this.getEntryIdByName(name)) !== undefined) {
-      throw new Error("Duplicate note");
+      throw new Error("笔记重复");
     }
     const id = NoteService.getNewId();
     const createdTime = NoteService.getCreatedTime();
-    return new Promise<Msg>(async (resolve, reject) => {
-      try {
-        const _ = await this.writeToNoteList(id, name);
-        const initialContent = "";
-        this.db.run(
-          `INSERT INTO note VALUES (?, ?, ?)`,
-          [id, createdTime, initialContent],
-          function (err) {
-            if (err) {
-              return reject(err.message);
-            }
-            resolve({ state: true, payload: name });
-          }
-        );
-      } catch (e) {
-        return reject(e);
-      }
-    });
+    const initialContent = "";
+    try {
+      await this.insertToNote(id, createdTime, initialContent);
+      await this.writeToNoteList(id, name);
+      return { state: true, payload: undefined };
+    } catch (e) {
+      return { state: false, payload: (e as Error).message };
+    }
   }
 
   //重命名笔记项
@@ -423,7 +432,7 @@ export class NoteService {
       return;
     }
     logger.info("读取笔记列表中的最后一条");
-    return new Promise<object | undefined>((resolve, reject) => {
+    return new Promise<Msg | undefined>((resolve, reject) => {
       this.db.get(
         `SELECT name FROM note t1
          INNER JOIN noteId t2 ON t1.id=t2.id

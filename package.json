@@ -1,7 +1,7 @@
 {
   "name": "fastnote",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.2.0",
   "description": "An app leveraging your note experience on desktop. Focus on anytime availability. ",
   "type": "module",
   "main": "dist-electron/main.js",
