@@ -1,8 +1,8 @@
 {
   "name": "fastnote",
   "private": true,
-  "version": "0.2.0",
-  "description": "An app leveraging your note experience on desktop. Focus on anytime availability. ",
+  "version": "0.5.0",
+  "description": "fastnote: An app leveraging your note experience on desktop. Focus on anytime availability. ",
   "type": "module",
   "main": "dist-electron/main.js",
   "author": "Iriseplos",

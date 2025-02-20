@@ -16,7 +16,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/ui/*"],
+      "$/*": ["public/*"]
+    }
   },
   "include": ["src"],
   "exclude": ["src/electron"]

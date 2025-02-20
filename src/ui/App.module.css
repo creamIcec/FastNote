@@ -2,7 +2,7 @@
   width: 100vw;
   height: 100vh;
   display: grid;
-  grid-template-columns: 0.2fr 1fr;
+  grid-template-columns: 0fr 1fr;
   grid-template-rows: 96px 1fr 0.2fr;
   grid-template-areas:
     "header header"
@@ -13,4 +13,8 @@
 
 .sidebar-hidden {
   grid-template-columns: 0 1fr !important;
+}
+
+.appbar-hidden {
+  grid-template-rows: 0px 1fr 0px !important;
 }

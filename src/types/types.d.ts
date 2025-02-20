@@ -6,7 +6,7 @@ interface Window {
   };
 
   windowEvents: {
-    onWindowShow: (callback: () => void) => void;
+    onWindowShow: (...callbacks: (() => void)[]) => void;
   };
 
   noteService: {

@@ -30,7 +30,7 @@ export async function saveNativeFile(fileName: string, content: string) {
       fs.writeFileSync(savePath, content, "utf-8");
       resolve({ state: true, payload: savePath });
     } catch (e) {
-      logger.error("保存到外部文件失败: ", e);
+      logger.error(`保存到外部文件失败: ${e}`);
       reject(e);
     }
   });

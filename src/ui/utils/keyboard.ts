@@ -47,4 +47,10 @@ function isFunctionKeyDuplicated(keys?: string[]) {
   return false;
 }
 
-export { isCharacterKey, isFunctionKey, isFunctionKeyDuplicated };
+const shortcutMap = {
+  createNote: ["ctrl+n", "cmd+n"],
+  instantCopy: ["ctrl+alt+c", "cmd+option+c"],
+  saveExternal: ["ctrl+s", "cmd+s"],
+};
+
+export { isCharacterKey, isFunctionKey, isFunctionKeyDuplicated, shortcutMap };

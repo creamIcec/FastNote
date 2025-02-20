@@ -41,3 +41,34 @@
   padding: 8px;
   --md-elevated-card-container-color: var(--md-sys-color-secondary-container);
 }
+
+.shortcuts-keys-list {
+  font-size: 16px;
+  width: 256px;
+  z-index: 2;
+  justify-content: center;
+  display: flex;
+  row-gap: 8px;
+  padding: 8px;
+  margin-top: 16px;
+  --md-filled-card-container-color: var(--md-sys-color-tertiary-container);
+}
+
+.shortcut-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 4px;
+  color: var(--text-color);
+}
+
+.shortcut {
+  display: flex;
+  flex-direction: column;
+  row-gap: 4px;
+  width: 50%;
+}
+
+.shortcut > span {
+  background-color: var(--md-sys-color-surface);
+}

@@ -21,6 +21,7 @@
   justify-content: center;
   align-items: center;
   row-gap: 4px;
+  color: var(--text-color);
 }
 
 .block-container-title {

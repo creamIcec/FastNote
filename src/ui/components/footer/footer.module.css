@@ -5,6 +5,20 @@
   flex-wrap: nowrap;
   align-items: center;
   background-color: var(--md-sys-color-primary-container);
+  position: relative;
+  bottom: 0;
+  transition: bottom 0.2s ease-out;
+}
+
+.footer-collapse {
+  grid-area: footer;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  background-color: var(--md-sys-color-primary-container);
+  position: relative;
+  bottom: -100px;
 }
 
 .head-container {
