@@ -54,5 +54,3 @@ jobs:
           files: |
             dist/*.exe
             dist/*.msi
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
