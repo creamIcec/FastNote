@@ -10,47 +10,46 @@ on:
 jobs:
   release:
     name: build and release electron app
+    runs-on: ${{ matrix.os}}
 
-    runs-on: ${matrix.os}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest]
 
-  strategy:
-    fail-fast: false
-    matrix:
-      os: [windows-latest]
+    steps:
+      - name: Check out git repository
+        uses: actions/checkout@v4.2.2
 
-  steps:
-    - name: Check out git repository
-      uses: actions/checkout@v4.2.2
+      - name: Install Node.js
+        uses: actions/setup-node@v4.2.0
 
-    - name: Install Node.js
-      uses: actions/setup-node@v4.2.0
+      - name: npm install
+        run: |
+          npm install
 
-    - name: npm install
-      run: |
-        npm install
+      - name: build windows app
+        if: matrix.os == 'windows-latest'
+        run: |
+          npm run electron:build-win
+        env: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: build windows app
-      if: matrix.os == 'windows-latest'
-      run: |
-        npm run electron:build-win
-      env: ${{ secrets.GITHUB_TOKEN }}
+      - name: cleanup artifacts in dist
+        if: matrix.os == 'windows-latest'
+        run: |
+          npx rimraf "dist/!(*.exe)"
+          npx rimraf "dist/!(*.msi)"
 
-    - name: cleanup artifacts in dist
-      if: matrix.os == 'windows-latest'
-      run: |
-        npx rimraf "dist/!(*.exe)"
-        npx rimraf "dist/!(*.msi)"
+      - name: upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.os }}
+          path: dist
 
-    - name: upload artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: ${{ matrix.os }}
-        path: dist
-
-    - name: release
-      uses: softprops/action-gh-release@v2
-      if: startsWith(github.ref, 'refs/tags/')
-      with:
-        files: ["dist/*.exe", "dist/*.msi"]
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: ["dist/*.exe", "dist/*.msi"]
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
