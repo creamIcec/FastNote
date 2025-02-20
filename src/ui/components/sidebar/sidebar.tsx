@@ -11,6 +11,7 @@ import { MdIcon, MdIconButton, MdList, MdListItem } from "react-material-web";
 import { useShallow } from "zustand/shallow";
 
 import styles from "./sidebar.module.css";
+import { motion } from "framer-motion";
 
 export default function SideBar({
   currentNoteTitle,
@@ -102,7 +103,7 @@ export default function SideBar({
             <MdIconButton onClick={handleClose}>
               <MdIcon>close</MdIcon>
             </MdIconButton>
-            <p>笔记列表</p>
+            <b>笔记列表</b>
           </div>
           <div className={styles["note-list-container"]}>
             <MdList className={styles["note-list"]}>
@@ -146,19 +147,21 @@ function NoteItem({
 
   return (
     <>
-      <MdListItem
-        type="link"
-        onClick={clickFunc ? () => clickFunc(itemId) : undefined}
-        onMouseMove={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
-      >
-        {itemId}
-        {isHovering && (
-          <MdIconButton slot="end" onClick={handleRemove}>
-            <MdIcon>delete</MdIcon>
-          </MdIconButton>
-        )}
-      </MdListItem>
+      <motion.div initial={{ x: "-5vw" }} animate={{ x: 0 }}>
+        <MdListItem
+          type="link"
+          onClick={clickFunc ? () => clickFunc(itemId) : undefined}
+          onMouseMove={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
+        >
+          {itemId}
+          {isHovering && (
+            <MdIconButton slot="end" onClick={handleRemove}>
+              <MdIcon>delete</MdIcon>
+            </MdIconButton>
+          )}
+        </MdListItem>
+      </motion.div>
     </>
   );
 }

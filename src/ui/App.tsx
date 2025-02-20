@@ -18,6 +18,7 @@ import { Toaster } from "react-hot-toast";
 import { useShallow } from "zustand/shallow";
 
 import styles from "./App.module.css";
+import { AnimatePresence } from "framer-motion";
 
 function App() {
   const [isOpen] = useSidebarState(useShallow((state) => [state.isOpen]));

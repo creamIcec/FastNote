@@ -15,6 +15,7 @@ import {
 } from "react-material-web";
 
 import styles from "./ShortcutBindWindow.module.css";
+import DialogAnimationWrapper from "./animator/DialogAnimationWrapper";
 
 export default function ShortcutBindWindow({
   applyShortcutCallback,
@@ -100,64 +101,66 @@ export default function ShortcutBindWindow({
 
   return (
     <WindowBlockComponentWrapper>
-      <MdElevatedCard className={styles.dialog}>
-        <div className={styles["block-container-title"]}>
-          <h3 className={styles["theme-text"]}>设置新的全局唤起快捷键</h3>
-          <p className={styles["theme-text"]}>按下快捷键快速显示/隐藏应用</p>
-        </div>
-        <div className={styles["block-container-input-wrapper"]}>
-          <input
-            type="text"
-            ref={keyBindingInputRef}
-            className={styles["key-bind-input"]}
-            disabled
-            placeholder="按下按键组合..."
-          />
-          <MdOutlinedButton
-            className={styles["dialog-action-button"]}
-            onClick={() => applyShortcutCallback()}
-          >
-            还原原始快捷键
-          </MdOutlinedButton>
-        </div>
-        <div className={styles["block-container-action-container"]}></div>
-      </MdElevatedCard>
+      <DialogAnimationWrapper>
+        <MdElevatedCard className={styles.dialog}>
+          <div className={styles["block-container-title"]}>
+            <h3 className={styles["theme-text"]}>设置新的全局唤起快捷键</h3>
+            <p className={styles["theme-text"]}>按下快捷键快速显示/隐藏应用</p>
+          </div>
+          <div className={styles["block-container-input-wrapper"]}>
+            <input
+              type="text"
+              ref={keyBindingInputRef}
+              className={styles["key-bind-input"]}
+              disabled
+              placeholder="按下按键组合..."
+            />
+            <MdOutlinedButton
+              className={styles["dialog-action-button"]}
+              onClick={() => applyShortcutCallback()}
+            >
+              还原原始快捷键
+            </MdOutlinedButton>
+          </div>
+          <div className={styles["block-container-action-container"]}></div>
+        </MdElevatedCard>
 
-      <MdFilledCard className={styles["shortcuts-keys-list"]}>
-        <div className={styles["shortcut-container"]}>
-          创建新笔记
-          <div className={styles["shortcut"]}>
-            {shortcutMap.createNote.map((item) => (
-              <ShortcutDisplayContainer
-                shortcut={item}
-                key={item}
-              ></ShortcutDisplayContainer>
-            ))}
+        <MdFilledCard className={styles["shortcuts-keys-list"]}>
+          <div className={styles["shortcut-container"]}>
+            创建新笔记
+            <div className={styles["shortcut"]}>
+              {shortcutMap.createNote.map((item) => (
+                <ShortcutDisplayContainer
+                  shortcut={item}
+                  key={item}
+                ></ShortcutDisplayContainer>
+              ))}
+            </div>
           </div>
-        </div>
-        <div className={styles["shortcut-container"]}>
-          快速复制内容
-          <div className={styles["shortcut"]}>
-            {shortcutMap.instantCopy.map((item) => (
-              <ShortcutDisplayContainer
-                shortcut={item}
-                key={item}
-              ></ShortcutDisplayContainer>
-            ))}
+          <div className={styles["shortcut-container"]}>
+            快速复制内容
+            <div className={styles["shortcut"]}>
+              {shortcutMap.instantCopy.map((item) => (
+                <ShortcutDisplayContainer
+                  shortcut={item}
+                  key={item}
+                ></ShortcutDisplayContainer>
+              ))}
+            </div>
           </div>
-        </div>
-        <div className={styles["shortcut-container"]}>
-          保存至外部文件
-          <div className={styles["shortcut"]}>
-            {shortcutMap.saveExternal.map((item) => (
-              <ShortcutDisplayContainer
-                shortcut={item}
-                key={item}
-              ></ShortcutDisplayContainer>
-            ))}
+          <div className={styles["shortcut-container"]}>
+            保存至外部文件
+            <div className={styles["shortcut"]}>
+              {shortcutMap.saveExternal.map((item) => (
+                <ShortcutDisplayContainer
+                  shortcut={item}
+                  key={item}
+                ></ShortcutDisplayContainer>
+              ))}
+            </div>
           </div>
-        </div>
-      </MdFilledCard>
+        </MdFilledCard>
+      </DialogAnimationWrapper>
     </WindowBlockComponentWrapper>
   );
 }

@@ -22,15 +22,12 @@ import clsx from "clsx";
 import Mousetrap from "mousetrap";
 import { useCallback, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import {
-  MdIcon,
-  MdIconButton,
-  MdOutlinedTextField,
-  MdOutlinedTextFieldElement,
-} from "react-material-web";
+import { MdIcon, MdIconButton } from "react-material-web";
 import { useShallow } from "zustand/shallow";
 
 import styles from "./appBar.module.css";
+import TitleRenameInput from "./input/TitleRenameInput";
+import { AnimatePresence } from "framer-motion";
 
 export default function AppBar({
   title,
@@ -49,7 +46,6 @@ export default function AppBar({
 
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
 
-  const titleRef = useRef<MdOutlinedTextFieldElement>(null);
   const [isRenaming, setIsRenaming] = useState<boolean>(false);
 
   const [theme, setTheme, getNextTheme] = useThemeState(
@@ -166,48 +162,36 @@ export default function AppBar({
     setIsRenaming(true);
   }, []);
 
-  const rename = useCallback(async () => {
-    const newTitle = titleRef.current?.value;
-    if (!newTitle || newTitle === title) {
-      setIsRenaming(false);
-      return;
-    }
-    const result = await renameNote(title, newTitle);
-    if (result) {
-      setIsRenaming(false);
-      setTitle(newTitle);
-    }
-  }, [title, setIsRenaming, setTitle]);
+  const rename = useCallback(
+    async (newTitle: string) => {
+      if (!newTitle || newTitle === title) {
+        setIsRenaming(false);
+        return;
+      }
+      const result = await renameNote(title, newTitle);
+      if (result) {
+        setIsRenaming(false);
+        setTitle(newTitle);
+      }
+    },
+    [title, setIsRenaming, setTitle]
+  );
 
   const handleRenameByKey = useCallback(
-    async (e: React.KeyboardEvent) => {
+    async (e: React.KeyboardEvent, newTitle: string) => {
       if (e.key === "Enter") {
-        rename();
+        rename(newTitle);
       }
     },
     [rename]
   );
 
   const handleRenameByClickOutside = useCallback(
-    (event: MouseEvent | React.FocusEvent) => {
-      if (
-        titleRef.current &&
-        !titleRef.current.contains(event.target as Node)
-      ) {
-        titleRef.current.blur();
-        rename();
-      }
+    (event: MouseEvent | React.FocusEvent, newTitle: string) => {
+      rename(newTitle);
     },
     [rename]
   );
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleRenameByClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleRenameByClickOutside);
-    };
-  }, [handleRenameByClickOutside]);
 
   useEffect(() => {
     Mousetrap.bind(["ctrl+s", "command+s"], () => {
@@ -351,15 +335,17 @@ export default function AppBar({
           </MdIconButton>
         </div>
       </div>
-      <div className={styles.title} onClick={handleRenameAttempt}>
+      <div
+        className={styles.title}
+        onClick={handleRenameAttempt}
+        style={!isRenaming ? { marginLeft: "8px" } : undefined}
+      >
         {isRenaming ? (
-          <MdOutlinedTextField
+          <TitleRenameInput
             value={title}
-            onKeyUp={handleRenameByKey}
+            onKeyup={handleRenameByKey}
             onBlur={handleRenameByClickOutside}
-            ref={titleRef}
-            className={styles["title-input"]}
-          />
+          ></TitleRenameInput>
         ) : (
           <p className={styles["theme-text"]}>{title}</p>
         )}

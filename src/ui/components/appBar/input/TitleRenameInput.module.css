@@ -1,0 +1,7 @@
+.title-input {
+  --md-outlined-text-field-top-space: 4px;
+  --md-outlined-text-field-bottom-space: 4px;
+  --md-outlined-text-field-leading-space: 0px;
+  --md-outlined-field-content-font: "SarasaMonoSC", system-ui;
+  --md-outlined-text-field-input-text-size: 24px;
+}

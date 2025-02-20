@@ -59,19 +59,14 @@
 .title {
   font-size: 24px;
   font-weight: 700;
-  margin-left: 8px;
 
   /* 标题区域需要点击交互, 设置为不可拖拽 */
   -webkit-app-region: no-drag;
-  width: fit-content;
+  width: 100%;
   display: flex;
   flex-direction: row;
   column-gap: 8px;
-}
-
-.title-input {
-  --md-outlined-text-field-top-space: 4px;
-  --md-outlined-text-field-bottom-space: 4px;
+  align-items: center;
 }
 
 .theme-text {
