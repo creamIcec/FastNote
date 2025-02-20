@@ -32,7 +32,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           npm run electron:build-win
-        env: ${{ secrets.GITHUB_TOKEN }}
+        env: ${{ secrets.ACTION_TOKEN }}
 
       - name: cleanup artifacts in dist
         if: matrix.os == 'windows-latest'
@@ -54,4 +54,4 @@ jobs:
             "dist/*.exe"
             "dist/*.msi"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
