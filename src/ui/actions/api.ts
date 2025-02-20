@@ -1,5 +1,6 @@
 //接口列表
 
+import { CallbackManager } from "../utils/callback_manager";
 import { getCurrentHour, getCurrentMinute, getDelay } from "../utils/datetime";
 
 // 获取当前笔记的名称
@@ -91,10 +92,14 @@ export function hideWindow() {
 }
 
 // 当显示窗口后触发
-export function registerOnWindowShowHandler(callback: () => void) {
-  window.windowEvents.onWindowShow(callback);
+export function registerOnWindowShowHandler(
+  callback: () => void,
+  manager: CallbackManager
+) {
+  manager.add(callback);
+  window.windowEvents.onWindowShow(...manager.getAll());
 }
 
-export function unregisterOnWindowShowHandler() {
+export function unregisterAllOnWindowShowHandler() {
   window.windowEvents.onWindowShow(() => {}); //TODO: real unregister(support multiple handlers)
 }

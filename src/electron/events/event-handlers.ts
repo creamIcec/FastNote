@@ -61,16 +61,12 @@ export function registerDataEventHandlers(noteService: NoteService) {
   });
 
   ipcMain.handle("note:saveExternal", async (_, name: string) => {
-    try {
-      const result = await noteService.saveToExternalFile(name);
-      if (result && result.state) {
-        logger.info(`已保存到外部文件, 路径: ${result.payload}`);
-        return result.payload;
-      }
-    } catch (e) {
-      logger.error(`保存时遇到错误:${e}`);
-      return e;
+    const result = await noteService.saveToExternalFile(name);
+    if (result && result.state) {
+      logger.info(`已保存到外部文件, 路径: ${result.payload}`);
+      return result.payload;
     }
+    return result?.payload;
   });
 
   ipcMain.handle(

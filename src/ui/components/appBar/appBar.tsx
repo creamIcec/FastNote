@@ -12,11 +12,13 @@ import {
   hideWindow,
   maximizeWindow,
   minimizeWindow,
+  registerOnWindowShowHandler,
   renameNote,
   saveNote,
   saveToExternalFile,
   scheduleNotification,
   setNewShortcut,
+  unregisterAllOnWindowShowHandler,
 } from "../../actions/api";
 import { useContent } from "../../states/content-state";
 import { useSidebarState } from "../../states/sidebar-state";
@@ -25,13 +27,19 @@ import { changeTheme } from "../../utils/theme";
 import NotificationSettingWindow from "../dialogs/NotificationSettingWindow";
 import ShortcutBindWindow from "../dialogs/ShortcutBindWindow";
 import styles from "./appBar.module.css";
+import clsx from "clsx";
+import { CallbackManager } from "../../utils/callback_manager";
 
 export default function AppBar({
   title,
   setTitle,
+  isDisplay,
+  setIsDisplay,
 }: {
   title: string;
   setTitle: (newTitle: string) => void;
+  isDisplay: boolean;
+  setIsDisplay: (isDisplay: boolean) => void;
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useSidebarState(
     useShallow((state) => [state.isOpen, state.setIsOpen])
@@ -113,33 +121,31 @@ export default function AppBar({
 
   const handleSaveExternal = useCallback(async () => {
     let result: string | undefined;
-    try {
-      //assume content in database is up to date with that in textarea
-      await saveNote(title, content);
-      result = await saveToExternalFile(title);
-      if (result) {
-        toast.success(
-          () => (
-            <div className={styles.toast}>
-              成功保存到:
-              <br />
-              {result}
-            </div>
-          ),
-          {
-            duration: 2000,
-            style: {
-              borderRadius: "24px",
-              background: "var(--md-sys-color-tertiary-container, #333)",
-            },
-          }
-        );
-      }
-    } catch (e) {
+    //assume content in database is up to date with that in textarea
+    await saveNote(title, content);
+    result = await saveToExternalFile(title);
+    if (result) {
+      toast.success(
+        () => (
+          <div className={styles.toast}>
+            成功保存到:
+            <br />
+            {result}
+          </div>
+        ),
+        {
+          duration: 2000,
+          style: {
+            borderRadius: "24px",
+            background: "var(--md-sys-color-tertiary-container, #333)",
+          },
+        }
+      );
+    } else {
       toast.error(
         () => (
           <div className={styles.toast}>
-            保存失败: {(e as Error).message}
+            保存失败, 可能是取消了
             <br /> {result}
           </div>
         ),
@@ -181,7 +187,7 @@ export default function AppBar({
   );
 
   const handleRenameByClickOutside = useCallback(
-    (event: MouseEvent) => {
+    (event: MouseEvent | React.FocusEvent) => {
       if (
         titleRef.current &&
         !titleRef.current.contains(event.target as Node)
@@ -259,11 +265,39 @@ export default function AppBar({
     setIsTimePickerOpen(false);
   };
 
+  useEffect(() => {
+    registerOnWindowShowHandler(() => {
+      setIsDisplay(false);
+    }, CallbackManager.getInstance());
+
+    return () => {
+      unregisterAllOnWindowShowHandler();
+    };
+  }, []);
+
+  useEffect(() => {
+    const onTryAccessAppBar = (e: MouseEvent) => {
+      if (e.clientY < 20) {
+        setIsDisplay(true);
+      }
+    };
+
+    if (!isDisplay) {
+      document.addEventListener("mousemove", onTryAccessAppBar);
+    }
+
+    return () => {
+      document.removeEventListener("mousemove", onTryAccessAppBar);
+    };
+  }, [isDisplay]);
+
   const timePickerRef = useRef(null);
   const contentUseRef = useRef(null);
 
   return (
-    <header className={styles.header}>
+    <header
+      className={clsx(isDisplay ? styles.header : styles["header-collapse"])}
+    >
       {isTimePickerOpen && (
         <NotificationSettingWindow
           onSet={handleScheduleNotification}

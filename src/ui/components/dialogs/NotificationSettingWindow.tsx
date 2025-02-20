@@ -6,7 +6,7 @@ import {
   MdFilledButton,
   MdOutlinedButton,
 } from "react-material-web";
-import { useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 export default function NotificationSettingWindow({
   onSet,
@@ -17,6 +17,24 @@ export default function NotificationSettingWindow({
 }) {
   const timePickerRef = useRef(null);
   const contentUseRef = useRef(null);
+
+  const handleOnQuit = useCallback(
+    (e: KeyboardEvent) => {
+      e.preventDefault();
+      if (e.key === "Escape") {
+        onCancel(e as any); //TODO
+      }
+    },
+    [onCancel]
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleOnQuit);
+    return () => {
+      document.removeEventListener("keydown", handleOnQuit);
+    };
+  }, []);
+
   return (
     <WindowBlockComponentWrapper>
       <MdElevatedCard className={styles.dialog}>

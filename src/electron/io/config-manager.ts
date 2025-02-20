@@ -32,7 +32,7 @@ export class ConfigManager {
     this.config = null;
   }
 
-  private async initialize() {
+  public async initialize() {
     try {
       this.config = await this.loadConfig();
       return this;
@@ -99,7 +99,6 @@ export class ConfigManager {
 
   public static async createConfigManager() {
     const configManager = new ConfigManager();
-    await configManager.initialize();
     ConfigManager.configManager = configManager;
     return configManager;
   }

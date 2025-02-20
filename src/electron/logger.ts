@@ -1,7 +1,8 @@
 import * as winston from "winston";
 import { isDev } from "./environment-util.js";
-import { resolve } from "path";
+import path, { resolve } from "path";
 import { fileURLToPath } from "url";
+import { app } from "electron";
 const { combine, timestamp, printf, splat, errors, colorize } = winston.format;
 const { transports } = winston;
 
@@ -15,6 +16,7 @@ export default (meta_url: string) => {
   const root = resolve("./");
   const file = fileURLToPath(new URL(meta_url));
   const file_path = file.replace(root, "");
+  const userDataPath = app.getPath("userData");
   //TODO: use
 
   const customFormat = printf(({ level, message, timestamp, stack }) => {
@@ -31,8 +33,13 @@ export default (meta_url: string) => {
     ),
     defaultMeta: { service: "user-service" },
     transports: [
-      new transports.File({ filename: "log/error.log", level: "error" }),
-      new transports.File({ filename: "log/common.log" }),
+      new transports.File({
+        filename: path.join(userDataPath, "log/error.log"),
+        level: "error",
+      }),
+      new transports.File({
+        filename: path.join(userDataPath, "log/common.log"),
+      }),
     ],
   });
 

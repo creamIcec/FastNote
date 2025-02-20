@@ -16,8 +16,10 @@ import {
 
 export default function SideBar({
   currentNoteTitle,
+  setIsCopyrightPanelOpen,
 }: {
   currentNoteTitle: string;
+  setIsCopyrightPanelOpen: (isCopyrightPanelOpen: boolean) => void;
 }) {
   const [isOpen, setIsOpen] = useSidebarState(
     useShallow((state) => [state.isOpen, state.setIsOpen])
@@ -32,6 +34,11 @@ export default function SideBar({
 
   const handleClose = () => {
     setIsOpen(false);
+  };
+
+  const handleOpenCopyrightPanel = () => {
+    setIsOpen(false);
+    setIsCopyrightPanelOpen(true);
   };
 
   useEffect(() => {
@@ -110,6 +117,11 @@ export default function SideBar({
                 ></NoteItem>
               ))}
             </MdList>
+          </div>
+          <div className={styles["bottom-container"]}>
+            <MdIconButton onClick={handleOpenCopyrightPanel}>
+              <MdIcon>info</MdIcon>
+            </MdIconButton>
           </div>
         </div>
       </div>

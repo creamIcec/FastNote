@@ -2,7 +2,12 @@ import { useCallback, useEffect } from "react";
 import toast from "react-hot-toast";
 import { MdFab, MdIcon } from "react-material-web";
 import { useShallow } from "zustand/shallow";
-import { copyCurrentNoteContent, createNote } from "../../actions/api";
+import {
+  copyCurrentNoteContent,
+  createNote,
+  registerOnWindowShowHandler,
+  unregisterAllOnWindowShowHandler,
+} from "../../actions/api";
 import { useContent, useTitle } from "../../states/content-state";
 import { useTypingState } from "../../states/note-saved-state";
 import {
@@ -13,8 +18,16 @@ import {
 } from "../../utils/datetime";
 import styles from "./footer.module.css";
 import Mousetrap from "mousetrap";
+import { CallbackManager } from "../../utils/callback_manager";
+import clsx from "clsx";
 
-export default function Footer() {
+export default function Footer({
+  isDisplay,
+  setIsDisplay,
+}: {
+  isDisplay: boolean;
+  setIsDisplay: (isDisplay: boolean) => void;
+}) {
   const [isSaved] = useTypingState(useShallow((state) => [state.saveState]));
   const [content, setContent] = useContent(
     useShallow((state) => [state.content, state.setContent])
@@ -100,8 +113,36 @@ export default function Footer() {
     };
   }, [handleCopy, handleCreateNote]);
 
+  useEffect(() => {
+    registerOnWindowShowHandler(() => {
+      setIsDisplay(false);
+    }, CallbackManager.getInstance());
+
+    return () => {
+      unregisterAllOnWindowShowHandler();
+    };
+  }, []);
+
+  useEffect(() => {
+    const onTryAccessAppBar = (e: MouseEvent) => {
+      if (window.innerHeight - e.clientY < 20) {
+        setIsDisplay(true);
+      }
+    };
+
+    if (!isDisplay) {
+      document.addEventListener("mousemove", onTryAccessAppBar);
+    }
+
+    return () => {
+      document.removeEventListener("mousemove", onTryAccessAppBar);
+    };
+  }, [isDisplay]);
+
   return (
-    <footer className={styles.footer}>
+    <footer
+      className={clsx(isDisplay ? styles.footer : styles["footer-collapse"])}
+    >
       <div className={styles["head-container"]}>{getSaveStateIndicator()}</div>
       <div className={styles["tail-container"]}>
         <MdFab onClick={handleCopy} variant="secondary">

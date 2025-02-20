@@ -27,7 +27,7 @@
   height: 100%;
   overflow-y: scroll;
   -webkit-app-region: no-drag;
-  height: calc(100% - 48px);
+  height: calc(100% - 96px);
 }
 
 .note-list-container::-webkit-scrollbar {
@@ -48,6 +48,18 @@
   min-width: 128px;
   width: 256px;
   height: 100%;
-  background: var(--md-sys-color-tertiary-container);
+  background-color: var(--md-sys-color-tertiary-container);
   position: relative;
+}
+
+.bottom-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  column-gap: 8px;
+  padding: 8px;
+  position: absolute;
+  bottom: 0;
+  z-index: 999;
+  background-color: var(--md-sys-color-tertiary-container);
 }

@@ -8,7 +8,7 @@ import {
   readNote,
   registerOnWindowShowHandler,
   saveNote,
-  unregisterOnWindowShowHandler,
+  unregisterAllOnWindowShowHandler,
 } from "../../actions/api";
 import {
   DEFAULT_NEW_NOTE_CONTENT,
@@ -16,6 +16,7 @@ import {
   SAVE_NOTE_INTERVAL,
 } from "../../constants";
 import { useContent } from "../../states/content-state";
+import { CallbackManager } from "../../utils/callback_manager";
 
 export default function NoteArea({ title }: { title: string }) {
   const [content, setContent] = useContent(
@@ -30,30 +31,29 @@ export default function NoteArea({ title }: { title: string }) {
     registerOnWindowShowHandler(() => {
       const textarea = textareaRef.current! as HTMLTextAreaElement;
       textarea.focus();
-    });
+    }, CallbackManager.getInstance());
 
     return () => {
-      unregisterOnWindowShowHandler();
+      unregisterAllOnWindowShowHandler();
     };
   }, []);
 
-  const handleSaveThrottled = useCallback(
-    () =>
-      lodash.throttle(async (title: string, content: string) => {
-        console.log(`正在保存的笔记的标题:${title}`);
-        const isSaved = await saveNote(title, content);
-        setIsSaved(isSaved ? "saved" : "error");
-        if (isSaved) {
-          clearTimeout(timeoutIndicator.current);
-          const intervalId = setTimeout(() => {
-            setIsSaved("pending");
-          }, SAVE_NOTE_INTERVAL);
-          timeoutIndicator.current = intervalId;
-        }
-      }, INDICATOR_REFRESH_INTERVAL),
-    [setIsSaved]
+  const handleSaveThrottled = lodash.throttle(
+    async (title: string, content: string) => {
+      console.log(`正在保存笔记的内容:${content}`);
+      console.log(`正在保存的笔记的标题:${title}`);
+      const isSaved = await saveNote(title, content);
+      setIsSaved(isSaved ? "saved" : "error");
+      if (isSaved) {
+        clearTimeout(timeoutIndicator.current);
+        const intervalId = setTimeout(() => {
+          setIsSaved("pending");
+        }, SAVE_NOTE_INTERVAL);
+        timeoutIndicator.current = intervalId;
+      }
+    },
+    INDICATOR_REFRESH_INTERVAL
   );
-
   const handleInput = useCallback(
     (e: Event) => {
       const event = e as InputEvent;
@@ -61,7 +61,7 @@ export default function NoteArea({ title }: { title: string }) {
       setContent(newContent);
       handleSaveThrottled(title, newContent);
     },
-    [title, setContent, handleSaveThrottled]
+    [title, setContent]
   );
 
   useEffect(() => {
@@ -89,7 +89,7 @@ export default function NoteArea({ title }: { title: string }) {
     textarea.focus();
 
     return () => {};
-  }, [title, handleSaveThrottled, setContent]);
+  }, [title, setContent]);
 
   const textareaRef = useRef(null);
 

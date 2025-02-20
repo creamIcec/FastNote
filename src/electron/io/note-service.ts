@@ -2,8 +2,6 @@
 import sqlite3 from "sqlite3";
 import { v4 as uuidv4 } from "uuid";
 import { saveNativeFile } from "./fs-utils.js";
-import { app } from "electron";
-import path from "path";
 
 import getLogger from "../logger.js";
 import { Msg } from "../types.js";
@@ -34,16 +32,12 @@ export class NoteService {
   private isDebug: boolean = false;
   private db: sqlite3.Database;
 
-  public constructor(isDebug: boolean) {
+  public constructor(isDebug: boolean, db: sqlite3.Database) {
     if (isDebug) {
       sqlite3.verbose();
     }
     this.isDebug = isDebug;
-    // 获取用户数据目录
-    const userDataPath = app.getPath("userData");
-    const dbPath = path.join(userDataPath, "notes.db");
-    this.db = new sqlite3.Database(dbPath);
-    this.init();
+    this.db = db;
   }
 
   private static getNewId() {
@@ -52,26 +46,6 @@ export class NoteService {
 
   private static getCreatedTime() {
     return Date.now();
-  }
-
-  private init() {
-    if (!this.db) {
-      return;
-    }
-    this.db.run(
-      "CREATE TABLE IF NOT EXISTS note (id TEXT, create_time INTEGER, content TEXT)"
-    );
-    this.db.run("CREATE TABLE IF NOT EXISTS noteId (id TEXT, name TEXT)");
-    this.db.run("CREATE TABLE IF NOT EXISTS recentNote (id TEXT)", (err) => {
-      if (err) {
-        logger.error(`Unable to create recentNote table: `, err);
-      }
-      this.db.run(`INSERT INTO recentNote VALUES (?)`, [""], (e) => {
-        if (e) {
-          logger.error(`Unable to seed recentNote table: `, e);
-        }
-      });
-    });
   }
 
   public resetDatabase() {
@@ -196,7 +170,8 @@ export class NoteService {
       const result = await saveNativeFile(escapedName, noteContent);
       return result;
     } catch (e) {
-      logger.log("保存到外部文件失败: ", e);
+      logger.error(`保存到外部文件失败: ${e}`);
+      return { state: false, payload: (e as Error).message };
     }
   }
 
@@ -364,6 +339,7 @@ export class NoteService {
     //检查是否存在
     logger.info(`尝试重命名${name} -> ${newName}`);
     const id = await this.getEntryIdByName(name);
+    logger.info(`重命名读取的id: ${id}`);
     if (id === undefined) {
       throw new Error("Note does not exist");
     }

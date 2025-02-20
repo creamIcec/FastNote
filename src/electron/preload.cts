@@ -7,8 +7,12 @@ electron.contextBridge.exposeInMainWorld("windowControl", {
 });
 
 electron.contextBridge.exposeInMainWorld("windowEvents", {
-  onWindowShow: (callback: () => void) =>
-    ipcRenderer.on("window:show", (event, value) => callback()),
+  onWindowShow: (...callbacks: (() => void)[]) =>
+    ipcRenderer.on("window:show", (event, value) => {
+      callbacks.forEach((callback) => {
+        callback();
+      });
+    }),
 });
 
 //暴露数据操作到渲染进程
