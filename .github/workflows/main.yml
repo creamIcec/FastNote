@@ -31,8 +31,7 @@ jobs:
       - name: build windows app
         if: matrix.os == 'windows-latest'
         run: |
-          npm run electron:build-win
-        env: ${{ secrets.ACTION_TOKEN }}
+          npm run dist:win
 
       - name: cleanup artifacts in dist
         if: matrix.os == 'windows-latest'
