@@ -1,50 +1,57 @@
-# React + TypeScript + Vite
+# <center><img src="./favicon-512x512.png" alt="Fastnote logo" align="center" width="8%" height="8%" /> FastNote</center>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<center>便利贴般方便的快速笔记, 专注于<b>快</b></center>
 
-Currently, two official plugins are available:
+## 主要特性
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 随开随写: 自定义全局快捷键切换窗口(默认`meta`+`alt`+`x`)
+- 快捷键覆盖: 节约鼠标操作时间
+- 提醒设置: 随手记下，稍后再办
+- 便利功能: 便捷导出，窗口置顶
+- 深色/浅色模式切换
 
-## Expanding the ESLint configuration
+## 开发状态
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- ✅ 目前支持`Windows`(`Linux`, `MacOS`开发中, 理论支持)
+- ✅ 基本功能完成
+- 🟡 多语言支持(简体中文/English/...)
 
-- Configure the top-level `parserOptions` property like this:
+## 如何开发
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### 1. 克隆仓库
+
+使用`git clone`或下载代码等方式
+
+### 2. 安装依赖
+
+使用下面的指令安装依赖:
+
+```bash
+npm install
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### 3. 从开发模式运行
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+使用下面的指令启动开发:
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+npm run dev
 ```
+
+### 4. 构建发布
+
+使用下面的指令发布:
+
+**Windows**:
+
+```bash
+npm run dist:win
+```
+
+> [!NOTE]
+>
+> `package.json`中存在面向其他平台的发布指令，但还未测试过。如果需要构建面向其他平台(Linux/MacOS)的版本，可以运行`dist:linux`或`dist:mac`。如果在其他平台上运行时发现任何问题，欢迎随时提出 issue！
+
+## 欢迎贡献
+
+如果在开发或使用过程中遇到任何问题，或有任何功能建议，欢迎随时提出 issue 和 Pull Request!
