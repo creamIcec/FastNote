@@ -1,4 +1,4 @@
-# <center><img src="./favicon-512x512.png" alt="Fastnote logo" align="center" width="8%" height="8%" /> FastNote</center>
+# <center><img src="./favicon-512x512.png" alt="Fastnote logo" align="center" width="5%" height="5%" /> FastNote</center>
 
 <center>便利贴般方便的快速笔记, 专注于<b>快</b></center>
 
