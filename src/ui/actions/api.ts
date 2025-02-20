@@ -1,7 +1,8 @@
 //接口列表
 
-import { CallbackManager } from "../utils/callback_manager";
-import { getCurrentHour, getCurrentMinute, getDelay } from "../utils/datetime";
+import { LinkTarget } from "@/types/types";
+import { CallbackManager } from "@/utils/callback_manager";
+import { getCurrentHour, getCurrentMinute, getDelay } from "@/utils/datetime";
 
 // 获取当前笔记的名称
 export async function readRecentTitle() {
@@ -91,7 +92,7 @@ export function hideWindow() {
   window.windowControl.hide();
 }
 
-// 当显示窗口后触发
+// 注册当显示窗口后触发的回调
 export function registerOnWindowShowHandler(
   callback: () => void,
   manager: CallbackManager
@@ -100,6 +101,10 @@ export function registerOnWindowShowHandler(
   window.windowEvents.onWindowShow(...manager.getAll());
 }
 
+// 取消注册全部显示窗口后的回调
 export function unregisterAllOnWindowShowHandler() {
   window.windowEvents.onWindowShow(() => {}); //TODO: real unregister(support multiple handlers)
 }
+
+// 在默认浏览器中打开链接
+export function openInBrowser(target: LinkTarget) {}

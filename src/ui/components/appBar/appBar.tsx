@@ -1,13 +1,3 @@
-import Mousetrap from "mousetrap";
-import { useCallback, useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
-import {
-  MdIcon,
-  MdIconButton,
-  MdOutlinedTextField,
-  MdOutlinedTextFieldElement,
-} from "react-material-web";
-import { useShallow } from "zustand/shallow";
 import {
   hideWindow,
   maximizeWindow,
@@ -19,16 +9,28 @@ import {
   scheduleNotification,
   setNewShortcut,
   unregisterAllOnWindowShowHandler,
-} from "../../actions/api";
-import { useContent } from "../../states/content-state";
-import { useSidebarState } from "../../states/sidebar-state";
-import { useThemeState } from "../../states/theme-state";
-import { changeTheme } from "../../utils/theme";
-import NotificationSettingWindow from "../dialogs/NotificationSettingWindow";
-import ShortcutBindWindow from "../dialogs/ShortcutBindWindow";
-import styles from "./appBar.module.css";
+} from "@/actions/api";
+import NotificationSettingWindow from "@/components/dialogs/NotificationSettingWindow";
+import ShortcutBindWindow from "@/components/dialogs/ShortcutBindWindow";
+import { useContent } from "@/states/content-state";
+import { useSidebarState } from "@/states/sidebar-state";
+import { useThemeState } from "@/states/theme-state";
+import { CallbackManager } from "@/utils/callback_manager";
+import { changeTheme } from "@/utils/theme";
+
 import clsx from "clsx";
-import { CallbackManager } from "../../utils/callback_manager";
+import Mousetrap from "mousetrap";
+import { useCallback, useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
+import {
+  MdIcon,
+  MdIconButton,
+  MdOutlinedTextField,
+  MdOutlinedTextFieldElement,
+} from "react-material-web";
+import { useShallow } from "zustand/shallow";
+
+import styles from "./appBar.module.css";
 
 export default function AppBar({
   title,

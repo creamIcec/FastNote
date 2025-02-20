@@ -1,18 +1,16 @@
-import { useShallow } from "zustand/shallow";
-import { useSidebarState } from "../../states/sidebar-state";
-import styles from "./sidebar.module.css";
-import { MdIconButton, MdIcon, MdList, MdListItem } from "react-material-web";
-import { useEffect, useState } from "react";
-import {
-  useAttemptDelete,
-  useContent,
-  useTitle,
-} from "../../states/content-state";
 import {
   deleteNote,
   readLastNoteNameInList,
   readNoteList,
-} from "../../actions/api";
+} from "@/actions/api";
+import { useAttemptDelete, useContent, useTitle } from "@/states/content-state";
+import { useSidebarState } from "@/states/sidebar-state";
+
+import { useEffect, useState } from "react";
+import { MdIcon, MdIconButton, MdList, MdListItem } from "react-material-web";
+import { useShallow } from "zustand/shallow";
+
+import styles from "./sidebar.module.css";
 
 export default function SideBar({
   currentNoteTitle,

@@ -1,5 +1,6 @@
+import { Theme } from "@/utils/theme";
+
 import { create } from "zustand";
-import { Theme } from "../utils/theme";
 
 const themes: Theme[] = ["system", "light", "dark"];
 

@@ -1,4 +1,5 @@
-import electron, { ipcMain, ipcRenderer } from "electron";
+import electron, { ipcRenderer } from "electron";
+
 // 暴露窗口操作到渲染进程
 electron.contextBridge.exposeInMainWorld("windowControl", {
   minimize: () => electron.ipcRenderer.invoke("minimize"),
@@ -13,6 +14,12 @@ electron.contextBridge.exposeInMainWorld("windowEvents", {
         callback();
       });
     }),
+});
+
+electron.contextBridge.exposeInMainWorld("externalResourceService", {
+  openInBrowser: (link: string) => {
+    ipcRenderer.invoke("external:openLink", link);
+  },
 });
 
 //暴露数据操作到渲染进程

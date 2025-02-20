@@ -1,16 +1,30 @@
 .dialog {
   width: 256px;
-  height: 212px;
+  height: 225px;
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 8px;
   --md-elevated-card-container-color: var(--md-sys-color-secondary-container);
+  color: var(--text-color);
+}
+
+.toolbar {
+  display: flex;
+  width: 100%;
+  flex-direction: row-reverse;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  padding: 4px 4px 0 0;
 }
 
 .block-container-title {
   padding: 8px;
+  display: flex;
+  align-items: center;
+  column-gap: 16px;
 }
 
 .theme-text {
@@ -20,4 +34,24 @@
 .theme-text-small {
   color: var(--text-color);
   font-size: 12px;
+}
+
+.third-party-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+  align-items: center;
+}
+
+.text-link-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 4px;
+  align-items: center;
+}
+
+.links {
+  display: flex;
+  flex-direction: row;
+  column-gap: 8px;
 }

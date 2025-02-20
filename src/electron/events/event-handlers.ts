@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain } from "electron";
+import { BrowserWindow, ipcMain, shell } from "electron";
 import { NoteService } from "../io/note-service.js";
 import {
   NotificationItem,
@@ -7,6 +7,7 @@ import {
 
 import getLogger from "../logger.js";
 import { modifyGlobalBringUpWindowShortcut } from "./glabol-event-handlers.js";
+import { LinkTarget } from "../types.js";
 const logger = getLogger(import.meta.url);
 
 export function registerWindowEventHandlers(window: BrowserWindow) {
@@ -167,6 +168,25 @@ export function registerDataEventHandlers(noteService: NoteService) {
     const accelerator = shortcut ? shortcut.join("+") : undefined;
     const result = modifyGlobalBringUpWindowShortcut(accelerator);
     return result;
+  });
+
+  ipcMain.handle("external:openLink", (event, link: LinkTarget) => {
+    switch (link) {
+      case "svgrepo": {
+        shell.openExternal("https://www.svgrepo.com");
+        break;
+      }
+      case "github": {
+        shell.openExternal("https://github.com/creamIcec/FastNote");
+        break;
+      }
+      case "material3": {
+        shell.openExternal("https://m3.material.io/");
+        break;
+      }
+      default:
+        break;
+    }
   });
 }
 

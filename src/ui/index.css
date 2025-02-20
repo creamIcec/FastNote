@@ -32,10 +32,12 @@ body {
 
 body {
   --text-color: #000000;
+  --background-color: #ffffff;
 }
 
 body.dark-mode {
   --text-color: #ffffff;
+  --background-color: #000000;
 }
 
 * {

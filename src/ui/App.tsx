@@ -1,21 +1,23 @@
+import { saveRecentNoteName } from "@/actions/api";
+import AppBar from "@/components/appBar/appBar";
+import Footer from "@/components/footer/footer";
+import NoteArea from "@/components/noteArea/noteArea";
+import SideBar from "@/components/sidebar/sidebar";
+import "@/font.css";
+import "@/index.css";
+import { useTitle } from "@/states/content-state";
+import { useSidebarState } from "@/states/sidebar-state";
+import { initColor, initTheme } from "@/utils/theme";
+
+import "@/lib/mousetrap_pause.js";
+import CopyrightAnnouncementWindow from "@/components/dialogs/CopyrightAnnouncementWindow.js";
+
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { useShallow } from "zustand/shallow";
-import { saveRecentNoteName } from "./actions/api";
-import styles from "./App.module.css";
-import AppBar from "./components/appBar/appBar";
-import Footer from "./components/footer/footer";
-import NoteArea from "./components/noteArea/noteArea";
-import SideBar from "./components/sidebar/sidebar";
-import "./font.css";
-import "./index.css";
-import { useTitle } from "./states/content-state";
-import { useSidebarState } from "./states/sidebar-state";
-import { initColor, initTheme } from "./utils/theme";
 
-import "./lib/mousetrap_pause.js";
-import CopyrightAnnouncementWindow from "./components/dialogs/CopyrightAnnouncementWIndow.js";
+import styles from "./App.module.css";
 
 function App() {
   const [isOpen] = useSidebarState(useShallow((state) => [state.isOpen]));

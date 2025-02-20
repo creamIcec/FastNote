@@ -1,12 +1,14 @@
 import WindowBlockComponentWrapper from "./WindowBlockComponentWrapper";
-import styles from "./NotificationSettingWindow.module.css";
+
+import { useCallback, useEffect, useRef } from "react";
 import {
   MdCheckbox,
   MdElevatedCard,
   MdFilledButton,
   MdOutlinedButton,
 } from "react-material-web";
-import { useCallback, useEffect, useRef } from "react";
+
+import styles from "./NotificationSettingWindow.module.css";
 
 export default function NotificationSettingWindow({
   onSet,

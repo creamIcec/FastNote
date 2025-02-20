@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+
 import styles from "./WindowBlockComponentWrapper.module.css";
 
 export default function WindowBlockComponentWrapper({

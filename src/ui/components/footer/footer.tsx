@@ -1,25 +1,27 @@
-import { useCallback, useEffect } from "react";
-import toast from "react-hot-toast";
-import { MdFab, MdIcon } from "react-material-web";
-import { useShallow } from "zustand/shallow";
 import {
   copyCurrentNoteContent,
   createNote,
   registerOnWindowShowHandler,
   unregisterAllOnWindowShowHandler,
-} from "../../actions/api";
-import { useContent, useTitle } from "../../states/content-state";
-import { useTypingState } from "../../states/note-saved-state";
+} from "@/actions/api";
+import { useContent, useTitle } from "@/states/content-state";
+import { useTypingState } from "@/states/note-saved-state";
+import { CallbackManager } from "@/utils/callback_manager";
 import {
   getCurrentHour,
   getCurrentMinute,
   getCurrentSecond,
   getFormattedDateTime,
-} from "../../utils/datetime";
-import styles from "./footer.module.css";
-import Mousetrap from "mousetrap";
-import { CallbackManager } from "../../utils/callback_manager";
+} from "@/utils/datetime";
+
 import clsx from "clsx";
+import Mousetrap from "mousetrap";
+import { useCallback, useEffect } from "react";
+import toast from "react-hot-toast";
+import { MdFab, MdIcon } from "react-material-web";
+import { useShallow } from "zustand/shallow";
+
+import styles from "./footer.module.css";
 
 export default function Footer({
   isDisplay,

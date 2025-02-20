@@ -25,3 +25,5 @@ declare global {
   }
   const Mousetrap: Window["Mousetrap"];
 }
+
+export type LinkTarget = "github" | "svgrepo" | "material3";

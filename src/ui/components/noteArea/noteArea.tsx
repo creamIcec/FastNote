@@ -1,22 +1,24 @@
-import { MdOutlinedTextField } from "react-material-web";
-import styles from "./noteArea.module.css";
-import { useCallback, useEffect, useRef } from "react";
-import lodash from "lodash";
-import { useTypingState } from "../../states/note-saved-state";
-import { useShallow } from "zustand/shallow";
 import {
   readNote,
   registerOnWindowShowHandler,
   saveNote,
   unregisterAllOnWindowShowHandler,
-} from "../../actions/api";
+} from "@/actions/api";
 import {
   DEFAULT_NEW_NOTE_CONTENT,
   INDICATOR_REFRESH_INTERVAL,
   SAVE_NOTE_INTERVAL,
-} from "../../constants";
-import { useContent } from "../../states/content-state";
-import { CallbackManager } from "../../utils/callback_manager";
+} from "@/constants";
+import { useContent } from "@/states/content-state";
+import { useTypingState } from "@/states/note-saved-state";
+import { CallbackManager } from "@/utils/callback_manager";
+
+import lodash from "lodash";
+import { useCallback, useEffect, useRef } from "react";
+import { MdOutlinedTextField } from "react-material-web";
+import { useShallow } from "zustand/shallow";
+
+import styles from "./noteArea.module.css";
 
 export default function NoteArea({ title }: { title: string }) {
   const [content, setContent] = useContent(

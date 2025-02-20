@@ -1,6 +1,7 @@
+import { DEFAULT_NOTE_TITLE } from "@/constants";
+import { readRecentTitle } from "@/actions/api";
+
 import { create } from "zustand";
-import { DEFAULT_NOTE_TITLE } from "../constants";
-import { readRecentTitle } from "../actions/api";
 
 export interface Content {
   content: string;

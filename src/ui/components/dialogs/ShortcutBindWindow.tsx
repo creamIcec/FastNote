@@ -1,18 +1,20 @@
-import {
-  MdElevatedCard,
-  MdFilledCard,
-  MdOutlinedButton,
-} from "react-material-web";
 import WindowBlockComponentWrapper from "./WindowBlockComponentWrapper";
-import styles from "./ShortcutBindWindow.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   isCharacterKey,
   isFunctionKeyDuplicated,
   shortcutMap,
-} from "../../utils/keyboard";
+} from "@/utils/keyboard";
+import ShortcutDisplayContainer from "@/components/helper/ShortcutDisplayContainer";
+
 import Mousetrap from "mousetrap";
-import ShortcutDisplayContainer from "../helper/ShortcutDisplayContainer";
+import {
+  MdElevatedCard,
+  MdFilledCard,
+  MdOutlinedButton,
+} from "react-material-web";
+
+import styles from "./ShortcutBindWindow.module.css";
 
 export default function ShortcutBindWindow({
   applyShortcutCallback,

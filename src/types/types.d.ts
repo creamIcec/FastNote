@@ -33,4 +33,8 @@ interface Window {
   shortcutService: {
     modifyGlobalBringUpWindowShortcut: (shortcut?: string[]) => boolean;
   };
+
+  externalResourceService: {
+    openInBrowser: (link: LinkTarget) => void;
+  };
 }
