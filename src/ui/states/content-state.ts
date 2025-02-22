@@ -1,7 +1,11 @@
-import { DEFAULT_NOTE_TITLE } from "@/constants";
+import {
+  DEFAULT_NOTE_TITLE,
+  DEFAULT_NOTE_TITLE_TRANSLATION_KEY,
+} from "@/constants";
 import { readRecentTitle } from "@/actions/api";
 
 import { create } from "zustand";
+import i18next from "i18next";
 
 export interface Content {
   content: string;
@@ -55,9 +59,11 @@ export const useTitle = create<Title>((set) => ({
   fetchAndSetPrevTitle: async () => {
     try {
       let savedPervTitle = await readRecentTitle();
-      console.log("最近标题:", savedPervTitle);
+      console.log("Title of recently used note:", savedPervTitle);
       if (!savedPervTitle) {
-        savedPervTitle = DEFAULT_NOTE_TITLE;
+        savedPervTitle = i18next.isInitialized
+          ? i18next.t(DEFAULT_NOTE_TITLE_TRANSLATION_KEY)
+          : DEFAULT_NOTE_TITLE;
       }
       set((prev) => ({
         ...prev,

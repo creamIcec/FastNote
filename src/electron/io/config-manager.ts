@@ -37,7 +37,7 @@ export class ConfigManager {
       this.config = await this.loadConfig();
       return this;
     } catch (error) {
-      logger.error("配置初始化失败:", error);
+      logger.error("Config initialization failed:", error);
       this.config = this.getDefaultConfig();
       return this;
     }
@@ -49,9 +49,12 @@ export class ConfigManager {
     }
     const valid = await this.ajv.validate(this.schema, json);
     if (!valid) {
-      logger.warn("配置文件验证错误, 恢复默认配置: ", this.ajv.errorsText());
+      logger.warn(
+        "Config is invalid, restoring default config: ",
+        this.ajv.errorsText()
+      );
     } else {
-      logger.info("配置文件验证完毕");
+      logger.info("Config validated");
     }
     return valid;
   }
@@ -69,7 +72,7 @@ export class ConfigManager {
       }
       return this.getDefaultConfig();
     } catch (e) {
-      logger.error(`配置加载失败:${e}`);
+      logger.error(`Failed to load config:${e}`);
       return this.getDefaultConfig();
     }
   }
@@ -83,10 +86,10 @@ export class ConfigManager {
 
       //保存完成后，再替换原来的文件
       fs.renameSync(tempPath, this.configPath);
-      logger.info(`配置保存成功`);
+      logger.info(`Config saved successfully`);
       return true;
     } catch (e) {
-      logger.error(`配置保存失败:${e}`);
+      logger.error(`Failed to save config:${e}`);
       return false;
     }
   }

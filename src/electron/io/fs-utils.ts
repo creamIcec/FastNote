@@ -2,6 +2,7 @@ import { dialog } from "electron";
 import fs from "node:fs";
 
 import GetLogger from "../logger.js";
+import { t } from "i18next";
 const logger = GetLogger(import.meta.url);
 
 export type ExternalSaveRecord = {
@@ -11,9 +12,9 @@ export type ExternalSaveRecord = {
 
 async function setSavePath(innerName: string) {
   const { canceled, filePath } = await dialog.showSaveDialog({
-    title: "保存文件",
+    title: t("save_external"),
     defaultPath: `${innerName}.txt`,
-    filters: [{ name: "文本文档", extensions: ["txt"] }],
+    filters: [{ name: t("format_txt"), extensions: ["txt"] }],
   });
 
   if (canceled) return null;
@@ -30,7 +31,7 @@ export async function saveNativeFile(fileName: string, content: string) {
       fs.writeFileSync(savePath, content, "utf-8");
       resolve({ state: true, payload: savePath });
     } catch (e) {
-      logger.error(`保存到外部文件失败: ${e}`);
+      logger.error(`Failed to save to external file: ${e}`);
       reject(e);
     }
   });

@@ -27,7 +27,7 @@ import { useShallow } from "zustand/shallow";
 
 import styles from "./appBar.module.css";
 import TitleRenameInput from "./input/TitleRenameInput";
-import { AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export default function AppBar({
   title,
@@ -68,26 +68,28 @@ export default function AppBar({
   };
 
   const handleBindKey = () => {
-    console.log("用户打开修改按键界面");
+    console.log("User opened: shortcut setting dialog");
     setIsModifyKeyBinding(!isModifyKeyBinding);
   };
+
+  const { t, i18n } = useTranslation();
 
   //如果传入的shortcut为空, 则恢复原始快捷键; 否则设置shortcut为快捷键
   const applyShortcut = (shortcut?: string[]) => {
     const result = setNewShortcut(shortcut);
     if (result) {
-      console.log("设置新快捷键成功");
+      console.log("Successfully set new shortcut");
       toast.success(
         () => (
           <div className={styles.toast}>
             {shortcut ? (
               <>
-                成功设置快捷键:
+                {t("set_shortcut_succeed")}:
                 <br />
                 {shortcut.join("+")}
               </>
             ) : (
-              "恢复原始快捷键"
+              t("restore_default_shortcut")
             )}
           </div>
         ),
@@ -100,15 +102,18 @@ export default function AppBar({
         }
       );
     } else {
-      console.warn("设置新快捷键失败");
-      toast.error(() => <div className={styles.toast}>设置新快捷键失败</div>, {
-        duration: 2000,
-        style: {
-          borderRadius: "24px",
-          background: "var(--md-sys-color-error-container, #333)",
-          color: "var(--text-color)",
-        },
-      });
+      console.warn("Failed to apply new shortcut");
+      toast.error(
+        () => <div className={styles.toast}>{t("save_shortcut_failed")}</div>,
+        {
+          duration: 2000,
+          style: {
+            borderRadius: "24px",
+            background: "var(--md-sys-color-error-container, #333)",
+            color: "var(--text-color)",
+          },
+        }
+      );
     }
     setIsModifyKeyBinding(false);
   };
@@ -126,7 +131,7 @@ export default function AppBar({
       toast.success(
         () => (
           <div className={styles.toast}>
-            成功保存到:
+            {t("save_succeed")}
             <br />
             {result}
           </div>
@@ -143,7 +148,7 @@ export default function AppBar({
       toast.error(
         () => (
           <div className={styles.toast}>
-            保存失败, 可能是取消了
+            {t("save_cancelled_or_failed")}
             <br /> {result}
           </div>
         ),
@@ -195,7 +200,7 @@ export default function AppBar({
 
   useEffect(() => {
     Mousetrap.bind(["ctrl+s", "command+s"], () => {
-      console.log("快捷键触发保存");
+      console.log("Shortcut triggered: Save to external file");
       handleSaveExternal();
       return false;
     });
@@ -233,8 +238,8 @@ export default function AppBar({
     console.log(targetTime);
     await scheduleNotification(
       targetTime,
-      `来自笔记: ${title}`,
-      useContent ? content : "你有新的提醒"
+      `${t("notification_source")}: ${title}`,
+      useContent ? content : ""
     );
     setIsTimePickerOpen(false);
   };

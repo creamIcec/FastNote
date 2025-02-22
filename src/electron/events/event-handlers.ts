@@ -5,26 +5,29 @@ import {
   NotificationService,
 } from "../io/notification-service.js";
 
+import i18next from "i18next";
+
 import getLogger from "../logger.js";
 import { modifyGlobalBringUpWindowShortcut } from "./glabol-event-handlers.js";
 import { LinkTarget } from "../types.js";
 import { showWindow } from "../actions/window-actions.js";
+import { languageConfig } from "../configs/i18next.config.js";
 const logger = getLogger(import.meta.url);
 
 export function registerWindowEventHandlers(window: BrowserWindow) {
   ipcMain.handle("minimize", () => {
-    logger.info("窗口最小化");
+    logger.info("Window Minimized");
     window.minimize();
   });
 
   ipcMain.handle("maximize", () => {
-    logger.info("窗口最大化");
+    logger.info("Window Maximized");
     window.maximize();
   });
 
   // 关闭窗口: 并不是关闭,而是隐藏到托盘
   ipcMain.handle("hide", () => {
-    logger.info("窗口最小化到托盘");
+    logger.info("Window minized to system tray");
     window.hide();
   });
 }
@@ -58,14 +61,16 @@ export function registerDataEventHandlers(noteService: NoteService) {
 
   ipcMain.handle("note:read", async (event, name: string) => {
     const content = await noteService.readFromNote(name);
-    logger.info(`成功读取笔记内容`);
+    logger.info(`Successfully read note content`);
     return content !== undefined ? content : undefined;
   });
 
   ipcMain.handle("note:saveExternal", async (_, name: string) => {
     const result = await noteService.saveToExternalFile(name);
     if (result && result.state) {
-      logger.info(`已保存到外部文件, 路径: ${result.payload}`);
+      logger.info(
+        `Successfully saved to external file path: ${result.payload}`
+      );
       return result.payload;
     }
     return result?.payload;
@@ -80,7 +85,7 @@ export function registerDataEventHandlers(noteService: NoteService) {
           return true;
         }
       } catch (e) {
-        logger.error(`重命名时遇到错误:${e}`);
+        logger.error(`Error occured when try to rename:${e}`);
         return e;
       }
     }
@@ -102,7 +107,9 @@ export function registerDataEventHandlers(noteService: NoteService) {
       }
       return false;
     } catch (e) {
-      logger.error(`保存最近标题失败: ${(e as Error).message}`);
+      logger.error(
+        `Failed to save recent used note title: ${(e as Error).message}`
+      );
       return false;
     }
   });
@@ -118,7 +125,7 @@ export function registerDataEventHandlers(noteService: NoteService) {
       }
       return result.state;
     } catch (e) {
-      logger.error("创建时遇到错误:", e);
+      logger.error("Error occurred when creating note:", e);
       return false;
     }
   });
@@ -126,13 +133,13 @@ export function registerDataEventHandlers(noteService: NoteService) {
   ipcMain.handle("notelist:read", async () => {
     try {
       const list = await noteService.readNoteList();
-      logger.info(`笔记列表:${list}`);
+      logger.info(`Note list:${list}`);
       if (list) {
         return list;
       }
       return [];
     } catch (e) {
-      logger.error("读取笔记列表时遇到错误:", e);
+      logger.error("Error occurred when reading note list:", e);
       return [];
     }
   });
@@ -144,10 +151,10 @@ export function registerDataEventHandlers(noteService: NoteService) {
         return false;
       }
       const result = await noteService.deleteNote(name);
-      logger.info(`删除结果: ${result.state ? "成功" : "失败"}`);
+      logger.info(`Deletion result: ${result.state ? "success" : "failed"}`);
       return result.state;
     } catch (e) {
-      logger.error("删除时遇到错误:", e);
+      logger.error("Error occurred when deleting note:", e);
       return false;
     }
   });
@@ -158,10 +165,10 @@ export function registerDataEventHandlers(noteService: NoteService) {
       if (!result || !result.state) {
         return undefined;
       }
-      logger.info(`读取的列表中最后一项:${result}`);
+      logger.info(`Last note in list:${result}`);
       return result.payload;
     } catch (e) {
-      logger.warn(`无法读取列表中的最后一项: ${e}`);
+      logger.warn(`Unable to read the last note in list: ${e}`);
     }
   });
 
@@ -197,11 +204,48 @@ export function registerNotificationEventHandlers(
   notificationService: NotificationService
 ) {
   ipcMain.handle("notification:set", async (event, delay, name, content?) => {
-    logger.info(`设置的通知延迟: ${delay}`);
+    logger.info(`Notification delay set: ${delay} ms`);
     notificationService.enqueue(
       new NotificationItem(content, name, delay, (e) => {
         showWindow(window);
       })
     );
+  });
+}
+
+//翻译后端事件处理器
+export function registerI18nEventHandlers(i18n: typeof i18next) {
+  i18n.on("loaded", (loaded) => {
+    i18n.changeLanguage("en");
+    i18n.off("loaded");
+  });
+
+  ipcMain.handle("i18n:getInitialTranslations", () => {
+    return i18n.getResourceBundle("en", "translation");
+  });
+
+  ipcMain.handle("i18n:getLanguages", () => {
+    return {
+      languages: languageConfig.languages,
+      languageMap: languageConfig.languageMap,
+    };
+  });
+
+  ipcMain.handle("i18n:changeLanguage", async (event, langCode) => {
+    i18n.changeLanguage(langCode);
+    return i18n.getResourceBundle(langCode, "translation");
+  });
+
+  ipcMain.handle("i18n:getCurrentLanguage", async () => {
+    return i18n.language;
+  });
+}
+
+export function registerI18nEventEmits(
+  i18n: typeof i18next,
+  callback: (code: string) => void
+) {
+  i18n.on("languageChanged", (code) => {
+    callback(code);
   });
 }

@@ -52,7 +52,7 @@ export class NotificationService {
           (i) => i.title !== item.title
         );
       }, item.delay);
-      logger.info("通知设置成功");
+      logger.info("Notification scheduled successfully");
     } else {
       throw new Error("Cannot create duplicated notifications.");
     }

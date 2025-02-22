@@ -12,14 +12,19 @@ import { useShallow } from "zustand/shallow";
 
 import styles from "./sidebar.module.css";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export default function SideBar({
   currentNoteTitle,
   setIsCopyrightPanelOpen,
+  setIsLanguageSettingPanelOpen,
 }: {
   currentNoteTitle: string;
   setIsCopyrightPanelOpen: (isCopyrightPanelOpen: boolean) => void;
+  setIsLanguageSettingPanelOpen: (isLanguageSettingPanelOpen: boolean) => void;
 }) {
+  const { t, i18n } = useTranslation();
+
   const [isOpen, setIsOpen] = useSidebarState(
     useShallow((state) => [state.isOpen, state.setIsOpen])
   );
@@ -40,8 +45,13 @@ export default function SideBar({
     setIsCopyrightPanelOpen(true);
   };
 
+  const handleChangeLanguage = () => {
+    setIsOpen(false);
+    setIsLanguageSettingPanelOpen(true);
+  };
+
   useEffect(() => {
-    console.log("刷新笔记列表");
+    console.log("Refreshing note list");
     const fetchNoteList = async () => {
       const list = await readNoteList();
       setNoteList(list);
@@ -103,7 +113,7 @@ export default function SideBar({
             <MdIconButton onClick={handleClose}>
               <MdIcon>close</MdIcon>
             </MdIconButton>
-            <b>笔记列表</b>
+            <b>{t("note_list")}</b>
           </div>
           <div className={styles["note-list-container"]}>
             <MdList className={styles["note-list"]}>
@@ -120,6 +130,9 @@ export default function SideBar({
           <div className={styles["bottom-container"]}>
             <MdIconButton onClick={handleOpenCopyrightPanel}>
               <MdIcon>info</MdIcon>
+            </MdIconButton>
+            <MdIconButton onClick={handleChangeLanguage}>
+              <MdIcon>language</MdIcon>
             </MdIconButton>
           </div>
         </div>

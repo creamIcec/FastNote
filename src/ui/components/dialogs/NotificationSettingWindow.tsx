@@ -10,6 +10,7 @@ import {
 
 import styles from "./NotificationSettingWindow.module.css";
 import DialogAnimationWrapper from "./animator/DialogAnimationWrapper";
+import { useTranslation } from "react-i18next";
 
 export default function NotificationSettingWindow({
   onSet,
@@ -20,6 +21,8 @@ export default function NotificationSettingWindow({
 }) {
   const timePickerRef = useRef(null);
   const contentUseRef = useRef(null);
+
+  const { t, i18n } = useTranslation();
 
   const handleOnQuit = useCallback(
     (e: KeyboardEvent) => {
@@ -57,9 +60,9 @@ export default function NotificationSettingWindow({
       <DialogAnimationWrapper>
         <MdElevatedCard className={styles.dialog}>
           <div className={styles["block-container-title"]}>
-            <h3 className={styles["theme-text"]}>设置一个提醒时刻</h3>
+            <h3 className={styles["theme-text"]}>{t("set_notification")}</h3>
             <p className={styles["theme-text"]}>
-              到达这个时刻之后, 应用将会通知提醒你哦
+              {t("set_notification_support")}
             </p>
           </div>
           <div className={styles["block-container-input-wrapper"]}>
@@ -75,7 +78,7 @@ export default function NotificationSettingWindow({
                 checked
                 ref={contentUseRef}
               ></MdCheckbox>
-              以笔记内容作为提醒内容
+              {t("use_note_as_notification")}
             </label>
           </div>
           <div className={styles["block-container-action-container"]}>
@@ -83,13 +86,13 @@ export default function NotificationSettingWindow({
               className={styles["dialog-action-button-small"]}
               onClick={onCancel}
             >
-              取消
+              {t("Cancel")}
             </MdOutlinedButton>
             <MdFilledButton
               className={styles["dialog-action-button-small"]}
               onClick={handleOnSet}
             >
-              确定
+              {t("Ok")}
             </MdFilledButton>
           </div>
         </MdElevatedCard>

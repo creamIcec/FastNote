@@ -13,12 +13,15 @@ import styles from "./CopyrightAnnouncementWindow.module.css";
 import favicon32 from "/icons/favicon-32x32.png";
 import githubIcon from "/icons/github.svg";
 import DialogAnimationWrapper from "./animator/DialogAnimationWrapper";
+import { useTranslation } from "react-i18next";
 
 export default function CopyrightAnnouncementWindow({
   setIsCopyrightWindowOpen,
 }: {
   setIsCopyrightWindowOpen: (isOpen: boolean) => void;
 }) {
+  const { t, i18n } = useTranslation();
+
   const handleOnQuit = useCallback(
     (e: KeyboardEvent) => {
       e.preventDefault();
@@ -35,6 +38,7 @@ export default function CopyrightAnnouncementWindow({
       document.removeEventListener("keydown", handleOnQuit);
     };
   }, []);
+
   return (
     <WindowBlockComponentWrapper>
       <DialogAnimationWrapper>
@@ -58,7 +62,7 @@ export default function CopyrightAnnouncementWindow({
           <div className={styles["third-party-container"]}>
             <div className={styles["text-link-container"]}>
               <div>
-                部分图标来自
+                {t("copyright_icons")}
                 <span
                   onClick={() => {
                     window.externalResourceService.openInBrowser("svgrepo");
@@ -73,7 +77,7 @@ export default function CopyrightAnnouncementWindow({
                 </span>
               </div>
               <div>
-                设计启发来自
+                {t("copyright_design")}
                 <span
                   onClick={() => {
                     window.externalResourceService.openInBrowser("material3");
@@ -91,7 +95,7 @@ export default function CopyrightAnnouncementWindow({
             <div className={styles["links"]}>
               <MdOutlinedButton style={{ padding: "4px" }}>
                 <MdIcon slot="icon">code</MdIcon>
-                第三方库
+                {t("copyright_third_party")}
               </MdOutlinedButton>
               <MdOutlinedButton
                 style={{ padding: "4px" }}
