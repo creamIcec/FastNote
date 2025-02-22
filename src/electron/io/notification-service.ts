@@ -8,6 +8,7 @@ export class NotificationItem {
   private _title: string;
   private _content: string;
   private _delay: number;
+  private _clickCallback?: (e: Electron.Event) => void;
   public get title() {
     return this._title;
   }
@@ -17,10 +18,19 @@ export class NotificationItem {
   public get delay() {
     return this._delay;
   }
-  public constructor(title: string, source: string, delay: number) {
+  public get clickCallback() {
+    return this._clickCallback;
+  }
+  public constructor(
+    title: string,
+    source: string,
+    delay: number,
+    clickCallback?: (e: Electron.Event) => void
+  ) {
     this._title = title;
     this._content = source;
     this._delay = delay;
+    this._clickCallback = clickCallback;
   }
 }
 

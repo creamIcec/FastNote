@@ -15,7 +15,7 @@ export default function NotificationSettingWindow({
   onSet,
   onCancel,
 }: {
-  onSet: React.MouseEventHandler;
+  onSet: (time: string, useContent: boolean) => void;
   onCancel: React.MouseEventHandler;
 }) {
   const timePickerRef = useRef(null);
@@ -29,6 +29,20 @@ export default function NotificationSettingWindow({
       }
     },
     [onCancel]
+  );
+
+  const handleOnSet = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      const timePickerInput = timePickerRef.current;
+      const useContentInput = contentUseRef.current;
+      if (timePickerInput && useContentInput) {
+        const time = (timePickerInput as HTMLInputElement).value;
+        const useContent = (useContentInput as HTMLInputElement).checked;
+        onSet(time, useContent);
+      }
+    },
+    [onSet]
   );
 
   useEffect(() => {
@@ -73,7 +87,7 @@ export default function NotificationSettingWindow({
             </MdOutlinedButton>
             <MdFilledButton
               className={styles["dialog-action-button-small"]}
-              onClick={onSet}
+              onClick={handleOnSet}
             >
               确定
             </MdFilledButton>

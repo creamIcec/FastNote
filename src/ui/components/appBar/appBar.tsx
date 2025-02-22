@@ -226,19 +226,15 @@ export default function AppBar({
     setIsTimePickerOpen(!isTimePickerOpen);
   };
 
-  const handleScheduleNotification = async () => {
-    if (!timePickerRef.current || !contentUseRef.current) {
-      return;
-    }
-    const targetTime = (timePickerRef!.current as HTMLInputElement).value;
+  const handleScheduleNotification = async (
+    targetTime: string,
+    useContent: boolean
+  ) => {
     console.log(targetTime);
-    const useContentAsNotification = (
-      contentUseRef!.current as HTMLInputElement
-    ).checked;
     await scheduleNotification(
       targetTime,
       `来自笔记: ${title}`,
-      useContentAsNotification ? content : "你有新的提醒"
+      useContent ? content : "你有新的提醒"
     );
     setIsTimePickerOpen(false);
   };
@@ -276,9 +272,6 @@ export default function AppBar({
       document.removeEventListener("mousemove", onTryAccessAppBar);
     };
   }, [isDisplay]);
-
-  const timePickerRef = useRef(null);
-  const contentUseRef = useRef(null);
 
   return (
     <header

@@ -74,7 +74,7 @@ app.on("ready", async () => {
   registerDataEventHandlers(noteService);
 
   //注册通知处理事件监听
-  registerNotificationEventHandlers(notificationService);
+  registerNotificationEventHandlers(mainWindow, notificationService);
 
   //注册全局快捷键
   registerGlobalBringUpWindowShortCut(() => {

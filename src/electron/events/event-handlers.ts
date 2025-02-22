@@ -8,6 +8,7 @@ import {
 import getLogger from "../logger.js";
 import { modifyGlobalBringUpWindowShortcut } from "./glabol-event-handlers.js";
 import { LinkTarget } from "../types.js";
+import { showWindow } from "../actions/window-actions.js";
 const logger = getLogger(import.meta.url);
 
 export function registerWindowEventHandlers(window: BrowserWindow) {
@@ -192,10 +193,15 @@ export function registerDataEventHandlers(noteService: NoteService) {
 
 //通知事件处理器
 export function registerNotificationEventHandlers(
+  window: BrowserWindow,
   notificationService: NotificationService
 ) {
   ipcMain.handle("notification:set", async (event, delay, name, content?) => {
     logger.info(`设置的通知延迟: ${delay}`);
-    notificationService.enqueue(new NotificationItem(content, name, delay));
+    notificationService.enqueue(
+      new NotificationItem(content, name, delay, (e) => {
+        showWindow(window);
+      })
+    );
   });
 }
