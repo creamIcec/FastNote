@@ -3,6 +3,7 @@ import path from "path";
 import { isDev } from "../environment-util.js";
 
 import GetLogger from "../logger.js";
+import { t } from "i18next";
 const logger = GetLogger(import.meta.url);
 
 export function initializeTray() {
@@ -17,22 +18,28 @@ export function initializeTray() {
   const icon = nativeImage.createFromPath(iconPath);
   const tray = new Tray(icon);
 
+  updateTrayMenu(tray);
+
+  return tray;
+}
+
+export function updateTrayMenu(tray: Tray) {
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: "保持窗口置顶",
+      label: t("keep_window_on_top"),
       type: "checkbox",
       click: (menuItem) => {
-        logger.info(`置顶:${menuItem.checked}`);
+        logger.info(`Always on top state:${menuItem.checked}`);
         const _window = BrowserWindow.getAllWindows()[0];
         logger.info(_window);
         _window?.setAlwaysOnTop(menuItem.checked, "pop-up-menu");
       },
     },
     {
-      label: "退出程序",
+      label: t("exit_app"),
       type: "normal",
       click: (_, window) => {
-        logger.info("退出程序");
+        logger.info("Exiting");
         window?.close();
         process.exit(0);
       },
@@ -41,8 +48,6 @@ export function initializeTray() {
 
   tray.setToolTip("FastNote");
   tray.setContextMenu(contextMenu);
-
-  return tray;
 }
 
 export function registerTrayClickEvent(tray: Tray, callback: () => void) {

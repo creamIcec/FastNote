@@ -10,7 +10,7 @@ export function nativeSendNotification(item: NotificationItem) {
   });
   if (item.clickCallback) {
     notification.on("click", (e) => {
-      logger.info("用户点击通知");
+      logger.info("User clicked the notification popup");
       item.clickCallback!(e);
       notification.close();
     });

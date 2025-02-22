@@ -24,7 +24,7 @@ function triggerSaveConfig() {
   const result = configManager.saveConfig();
   if (result) {
     logger.info(
-      `全局快捷键保存, 当前快捷键:${globalShortcutState.accelerator}`
+      `Global shortcut saved, current one is:${globalShortcutState.accelerator}`
     );
   }
 }
@@ -46,7 +46,7 @@ export function registerGlobalBringUpWindowShortCut(callback?: () => void) {
 
   // 检查全局快捷键是否注册成功
   logger.info(
-    `全局快捷键注册状态: ${globalShortcut.isRegistered(
+    `Global shortcut registration state: ${globalShortcut.isRegistered(
       globalShortcutState.accelerator
     )}`
   );
@@ -58,7 +58,7 @@ export function unregisterGlobalBringUpWindowShortCut() {
 }
 
 export function modifyGlobalBringUpWindowShortcut(newShortcut?: string) {
-  logger.info(`用户设置新的快捷键: ${newShortcut}`);
+  logger.info(`User attempted setting a new shortcut: ${newShortcut}`);
   newShortcut = newShortcut || defaultAccelerator;
   globalShortcut.unregister(globalShortcutState.accelerator);
   const ret = globalShortcut.register(

@@ -1,4 +1,4 @@
-import { saveRecentNoteName } from "@/actions/api";
+import { changeLanguage, saveRecentNoteName } from "@/actions/api";
 import AppBar from "@/components/appBar/appBar";
 import Footer from "@/components/footer/footer";
 import NoteArea from "@/components/noteArea/noteArea";
@@ -18,7 +18,8 @@ import { Toaster } from "react-hot-toast";
 import { useShallow } from "zustand/shallow";
 
 import styles from "./App.module.css";
-import { AnimatePresence } from "framer-motion";
+import LanguageSettingWindow from "./components/dialogs/LanguageSettingWindow";
+import i18next from "i18next";
 
 function App() {
   const [isOpen] = useSidebarState(useShallow((state) => [state.isOpen]));
@@ -32,6 +33,8 @@ function App() {
   const [isAppBarDisplay, setIsAppBarDisplay] = useState(true);
   const [isFooterDisplay, setIsFooterDisplay] = useState(true);
   const [isCopyrightWindowOpen, setIsCopyrightWindowOpen] = useState(false);
+  const [isLanguageSettingPanelOpen, setIsLanguageSettingPanelOpen] =
+    useState(false);
 
   useEffect(() => {
     //应用加载时获取之前笔记的标题
@@ -44,7 +47,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    console.log(`标题发生改变:${title}`);
+    console.log(`New title has been set:${title}`);
     if (title) {
       const saveRecentTitle = async () => {
         await saveRecentNoteName(title);
@@ -59,6 +62,14 @@ function App() {
       setIsFooterDisplay(true);
     }
   }, [isAppBarDisplay, isFooterDisplay]);
+
+  const handleLanguageChange = async (lang: string) => {
+    const bundle = await changeLanguage(lang);
+    if (!i18next.hasResourceBundle(lang, "translation")) {
+      i18next.addResourceBundle(lang, "translation", bundle);
+    }
+    i18next.changeLanguage(lang);
+  };
 
   return (
     <div
@@ -82,11 +93,18 @@ function App() {
           setIsCopyrightWindowOpen={setIsCopyrightWindowOpen}
         ></CopyrightAnnouncementWindow>
       )}
+      {isLanguageSettingPanelOpen && (
+        <LanguageSettingWindow
+          setIsLanguageSettingWindowOpen={setIsLanguageSettingPanelOpen}
+          applyLanguageSetting={handleLanguageChange}
+        ></LanguageSettingWindow>
+      )}
       <Footer isDisplay={isFooterDisplay} setIsDisplay={setIsFooterDisplay} />
 
       {isOpen && title && (
         <SideBar
           setIsCopyrightPanelOpen={setIsCopyrightWindowOpen}
+          setIsLanguageSettingPanelOpen={setIsLanguageSettingPanelOpen}
           currentNoteTitle={title}
         />
       )}

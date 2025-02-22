@@ -142,7 +142,7 @@ export class NoteService {
       return;
     }
     const id = await this.getEntryIdByName(name);
-    logger.info(`存在${name}对应id, 开始写入...`);
+    logger.info(`${name} corresponding id exists, writing started...`);
     return new Promise<string>((resolve, reject) =>
       this.db.run(
         `UPDATE note SET content = ? WHERE id = ?`,
@@ -170,7 +170,7 @@ export class NoteService {
       const result = await saveNativeFile(escapedName, noteContent);
       return result;
     } catch (e) {
-      logger.error(`保存到外部文件失败: ${e}`);
+      logger.error(`Failed to save to external file: ${e}`);
       return { state: false, payload: (e as Error).message };
     }
   }
@@ -182,10 +182,10 @@ export class NoteService {
     }
     const id = await this.getEntryIdByName(name);
     if (!id) {
-      logger.warn(`不存在${name}, 返回undefined`);
+      logger.warn(`${name} does not exist, returning undefined`);
       return undefined;
     }
-    logger.info(`存在${name}对应id, 开始读取...`);
+    logger.info(`${name} corresponding id exists, reading started...`);
     return new Promise<string | undefined>((resolve, reject) => {
       this.db.get(
         `SELECT * FROM note WHERE id = ?`,
@@ -222,7 +222,7 @@ export class NoteService {
         if (row.id === "") {
           return resolve(undefined);
         }
-        logger.info(`最近的笔记标题:${name}`);
+        logger.info(`Recent used note title:${name}`);
         resolve(name);
       });
     });
@@ -232,10 +232,13 @@ export class NoteService {
   //在切换笔记时执行
   public async saveRecentTitle(name: string): Promise<Msg> {
     if (!this.db) {
-      return { state: false, payload: "数据库未连接, 请尝试重启应用" };
+      return {
+        state: false,
+        payload: "Database is not connected, please try reloading app",
+      };
     }
     const id = await this.getEntryIdByName(name);
-    logger.info(`正在保存新的最近标题`);
+    logger.info(`Saving new recent used note title`);
     return new Promise<Msg>((resolve, reject) => {
       this.db.get(
         `UPDATE recentNote SET id = ?`,
@@ -313,7 +316,10 @@ export class NoteService {
   //创建新笔记
   public async createNote(name: string): Promise<Msg> {
     if (!this.db) {
-      return { state: false, payload: "数据库未连接, 请尝试重启应用" };
+      return {
+        state: false,
+        payload: "Database is not connected, please try reloading app",
+      };
     }
     //检查重名
     if ((await this.getEntryIdByName(name)) !== undefined) {
@@ -337,13 +343,13 @@ export class NoteService {
       return;
     }
     //检查是否存在
-    logger.info(`尝试重命名${name} -> ${newName}`);
+    logger.info(`Try renaming${name} -> ${newName}`);
     const id = await this.getEntryIdByName(name);
-    logger.info(`重命名读取的id: ${id}`);
+    logger.info(`id read for renaming: ${id}`);
     if (id === undefined) {
       throw new Error("Note does not exist");
     }
-    logger.info(`将${name}重命名成${newName}`);
+    logger.info(`Renaming ${name} to ${newName}`);
     return new Promise<string>((resolve, reject) =>
       this.db.run(
         `UPDATE noteId SET name = ? WHERE id = ?`,
@@ -361,7 +367,7 @@ export class NoteService {
   //检查是否存在一条笔记
   public async exists(name: string) {
     const id = await this.getEntryIdByName(name);
-    logger.info(`${name}对应的id存在`);
+    logger.info(`${name} corresponding id exists`);
     return id !== undefined;
   }
 
@@ -371,7 +377,7 @@ export class NoteService {
     if (!this.db) {
       return;
     }
-    logger.info(`将${name}写入笔记列表`);
+    logger.info(`writing note "${name}" to list`);
     return new Promise<string>((resolve, reject) => {
       this.db.run(
         `INSERT INTO noteId VALUES (?, ?)`,
@@ -407,7 +413,7 @@ export class NoteService {
     if (!this.db) {
       return;
     }
-    logger.info("读取笔记列表中的最后一条");
+    logger.info("Reading the last note from list");
     return new Promise<Msg | undefined>((resolve, reject) => {
       this.db.get(
         `SELECT name FROM note t1

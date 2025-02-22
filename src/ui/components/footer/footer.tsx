@@ -22,6 +22,7 @@ import { MdFab, MdIcon } from "react-material-web";
 import { useShallow } from "zustand/shallow";
 
 import styles from "./footer.module.css";
+import { useTranslation } from "react-i18next";
 
 export default function Footer({
   isDisplay,
@@ -36,23 +37,26 @@ export default function Footer({
   );
   const [setTitle] = useTitle(useShallow((state) => [state.setTitle]));
 
+  const { t, i18n } = useTranslation();
+
   const handleCopy = useCallback(() => {
     copyCurrentNoteContent(content).then(
       function () {
-        toast.success(() => <div className={styles.toast}>复制成功!</div>, {
-          duration: 2000,
-          style: {
-            borderRadius: "24px",
-            background: "var(--md-sys-color-tertiary-container, #333)",
-            color: "var(--text-color)",
-          },
-        });
+        toast.success(
+          () => <div className={styles.toast}>{t("copy_succeed")}</div>,
+          {
+            duration: 2000,
+            style: {
+              borderRadius: "24px",
+              background: "var(--md-sys-color-tertiary-container, #333)",
+              color: "var(--text-color)",
+            },
+          }
+        );
       },
       function () {
         toast.error(
-          () => (
-            <div className={styles.toast}>复制出错了, 可能是系统不支持</div>
-          ),
+          () => <div className={styles.toast}>{t("copy_failed")}</div>,
           {
             duration: 2000,
             style: {
@@ -81,9 +85,9 @@ export default function Footer({
         return (
           <div className={styles["indicator"]}>
             <MdIcon className={styles["success-text"]}>check_circle</MdIcon>
-            <span
-              className={styles["success-text"]}
-            >{`上次自动保存于: ${getCurrentHour()}:${getCurrentMinute()}:${getCurrentSecond()}`}</span>
+            <span className={styles["success-text"]}>{`${t(
+              "last_save_time_indicator"
+            )} ${getCurrentHour()}:${getCurrentMinute()}:${getCurrentSecond()}`}</span>
           </div>
         );
       case "pending":
@@ -92,7 +96,7 @@ export default function Footer({
         return (
           <div className={styles["indicator"]}>
             <MdIcon className={styles["error-text"]}>error</MdIcon>
-            <span className={styles["error-text"]}>保存失败，出错了</span>
+            <span className={styles["error-text"]}>{t("save_failed")}</span>
           </div>
         );
     }
@@ -100,12 +104,12 @@ export default function Footer({
 
   useEffect(() => {
     Mousetrap.bind(["ctrl+n", "command+n"], () => {
-      console.log("快捷键触发新建");
+      console.log("Shortcut triggered: create new note");
       handleCreateNote();
     });
 
     Mousetrap.bind(["ctrl+alt+c", "command+option+c"], () => {
-      console.log("快捷键触发复制内容");
+      console.log("Shortcut triggered: copy content");
       handleCopy();
     });
 

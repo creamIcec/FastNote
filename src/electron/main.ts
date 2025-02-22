@@ -3,6 +3,8 @@ import path from "path";
 import { getPreloadPath, isDebug, isDev } from "./environment-util.js";
 import {
   registerDataEventHandlers,
+  registerI18nEventEmits,
+  registerI18nEventHandlers,
   registerNotificationEventHandlers,
   registerWindowCloseEventHandler,
   registerWindowEventEmits,
@@ -12,7 +14,11 @@ import {
   registerGlobalBringUpWindowShortCut,
   unregisterGlobalBringUpWindowShortCut,
 } from "./events/glabol-event-handlers.js";
-import { initializeTray, registerTrayClickEvent } from "./native/tray.js";
+import {
+  initializeTray,
+  registerTrayClickEvent,
+  updateTrayMenu,
+} from "./native/tray.js";
 import { showWindow, toggleWindow } from "./actions/window-actions.js";
 import { NoteService } from "./io/note-service.js";
 import { NotificationService } from "./io/notification-service.js";
@@ -22,6 +28,7 @@ import {
   getDatabase,
   initDatabase,
 } from "./io/database-manager.js";
+import { i18next, initI18n } from "./configs/i18next.config.js";
 
 app.on("ready", async () => {
   const mainWindow = new BrowserWindow({
@@ -50,19 +57,27 @@ app.on("ready", async () => {
   //创建通知服务对象
   const notificationService = new NotificationService();
 
-  if (debug) {
-    mainWindow.webContents.openDevTools();
-  }
-
   if (isDev()) {
     mainWindow.loadURL("http://localhost:5173");
   } else {
     mainWindow.loadFile(path.join(app.getAppPath(), "/dist-react/index.html"));
   }
 
+  if (debug) {
+    mainWindow.on("ready-to-show", () => {
+      mainWindow.webContents.openDevTools({ mode: "detach" });
+    });
+  }
+
   //创建配置管理器
   const configManager = await ConfigManager.createConfigManager();
   await configManager.initialize();
+
+  //注册所有i18n后端事件监听
+  registerI18nEventHandlers(i18next);
+
+  //启动i18n引擎
+  await initI18n();
 
   //注册所有窗口控制事件监听
   registerWindowEventHandlers(mainWindow);
@@ -85,6 +100,11 @@ app.on("ready", async () => {
   const tray = initializeTray();
   registerTrayClickEvent(tray, () => {
     showWindow(mainWindow);
+  });
+
+  //注册i18n语言变化事件触发
+  registerI18nEventEmits(i18next, (code) => {
+    updateTrayMenu(tray);
   });
 
   //注册任务栏退出时重定向到缩小到托盘

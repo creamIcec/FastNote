@@ -16,6 +16,7 @@ import {
 
 import styles from "./ShortcutBindWindow.module.css";
 import DialogAnimationWrapper from "./animator/DialogAnimationWrapper";
+import { useTranslation } from "react-i18next";
 
 export default function ShortcutBindWindow({
   applyShortcutCallback,
@@ -26,6 +27,8 @@ export default function ShortcutBindWindow({
 }) {
   const keyBindingInputRef = useRef(null);
   const [keys, setKeys] = useState<string[]>([]);
+
+  const { t, i18n } = useTranslation();
 
   const appendKeyToSeries = useCallback(
     (e: KeyboardEvent) => {
@@ -44,7 +47,7 @@ export default function ShortcutBindWindow({
       }
       const input = keyBindingInputRef.current as unknown as HTMLInputElement;
       if (!input) {
-        console.warn("无法获取到按键绑定输入框");
+        console.warn("Unable to access input for key binding");
         return;
       }
 
@@ -86,11 +89,11 @@ export default function ShortcutBindWindow({
   useEffect(() => {
     document.addEventListener("keydown", appendKeyToSeries);
     document.addEventListener("keyup", tryApplyShortcut);
-    console.log("打开全局侦听");
+    console.log("Global keydown listener enabled");
     return () => {
       document.removeEventListener("keydown", appendKeyToSeries);
       document.removeEventListener("keyup", tryApplyShortcut);
-      console.log("关闭全局侦听");
+      console.log("Global keydown listener disabled");
     };
   }, [appendKeyToSeries, tryApplyShortcut]);
 
@@ -104,8 +107,10 @@ export default function ShortcutBindWindow({
       <DialogAnimationWrapper>
         <MdElevatedCard className={styles.dialog}>
           <div className={styles["block-container-title"]}>
-            <h3 className={styles["theme-text"]}>设置新的全局唤起快捷键</h3>
-            <p className={styles["theme-text"]}>按下快捷键快速显示/隐藏应用</p>
+            <h3 className={styles["theme-text"]}>{t("set_global_shortcut")}</h3>
+            <p className={styles["theme-text"]}>
+              {t("set_global_shortcut_support")}
+            </p>
           </div>
           <div className={styles["block-container-input-wrapper"]}>
             <input
@@ -113,13 +118,13 @@ export default function ShortcutBindWindow({
               ref={keyBindingInputRef}
               className={styles["key-bind-input"]}
               disabled
-              placeholder="按下按键组合..."
+              placeholder={t("key_binding_placeholder")}
             />
             <MdOutlinedButton
               className={styles["dialog-action-button"]}
               onClick={() => applyShortcutCallback()}
             >
-              还原原始快捷键
+              {t("restore_default_shortcut")}
             </MdOutlinedButton>
           </div>
           <div className={styles["block-container-action-container"]}></div>
@@ -127,7 +132,7 @@ export default function ShortcutBindWindow({
 
         <MdFilledCard className={styles["shortcuts-keys-list"]}>
           <div className={styles["shortcut-container"]}>
-            创建新笔记
+            {t("create_new_note")}
             <div className={styles["shortcut"]}>
               {shortcutMap.createNote.map((item) => (
                 <ShortcutDisplayContainer
@@ -138,7 +143,7 @@ export default function ShortcutBindWindow({
             </div>
           </div>
           <div className={styles["shortcut-container"]}>
-            快速复制内容
+            {t("copy_content")}
             <div className={styles["shortcut"]}>
               {shortcutMap.instantCopy.map((item) => (
                 <ShortcutDisplayContainer
@@ -149,7 +154,7 @@ export default function ShortcutBindWindow({
             </div>
           </div>
           <div className={styles["shortcut-container"]}>
-            保存至外部文件
+            {t("save_external")}
             <div className={styles["shortcut"]}>
               {shortcutMap.saveExternal.map((item) => (
                 <ShortcutDisplayContainer

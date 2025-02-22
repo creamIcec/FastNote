@@ -37,4 +37,11 @@ interface Window {
   externalResourceService: {
     openInBrowser: (link: LinkTarget) => void;
   };
+
+  i18nService: {
+    getInitialTranslations: () => any;
+    getAvailableLanguages: () => any;
+    changeLanguage: (lang: string) => any;
+    getCurrentLanguage: () => Promise<string>;
+  };
 }
