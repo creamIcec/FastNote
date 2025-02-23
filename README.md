@@ -2,7 +2,15 @@
 
 <div align="center">
     <a href="./README.md">English</a> | <a href="./README.zh-cn.md">简体中文</a>
-    <p>FastNote is an app focused on <b>convenience</b></p>
+    <p>FastNote is an app focused on <b>convenience</b>, <br/> build with Electron, React, Vite, and our favorite material design 3.</p>
+</div>
+
+<div align="center">
+
+  <a href="">[![React][React.js]][React-url]</a>
+  <a href="">[![Electron][Electron]][Electron-url]</a>
+  <a href="">[![Vite][Vite]][Vite-url]</a>
+
 </div>
 
 ## 💡 Main Features
@@ -53,10 +61,17 @@ Use the following commands to build for release:
 npm run dist:win
 ```
 
-[!NOTE]
-
-The package.json file contains build scripts for other platforms, but they have not been tested yet. If you need to build for other platforms (Linux/MacOS), you can run dist:linux or dist:mac. If you encounter any issues when running on other platforms, feel free to open an issue!
+> [!NOTE]
+>
+> The package.json file contains build scripts for other platforms, but they have not been tested yet. If you need to build for other platforms (Linux/MacOS), you can run dist:linux or dist:mac. If you encounter any issues when running on ?other platforms, feel free to open an issue!
 
 ## ❤️ Contributions Welcome
 
 If you encounter any issues during development or usage, or if you have any feature suggestions, feel free to open an issue or submit a Pull Request!
+
+[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React-url]: https://reactjs.org/
+[Electron]: https://img.shields.io/badge/electron-20232A?style=for-the-badge&logo=electron&logocolor=47848F
+[Electron-url]: https://www.electronjs.org/
+[Vite]: https://img.shields.io/badge/vite-20232A?style=for-the-badge&logo=vite&logocolor=646CFF
+[Vite-url]: https://vite.dev/
