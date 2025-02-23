@@ -1,47 +1,52 @@
-# <center><img src="./favicon-512x512.png" alt="Fastnote logo" align="center" width="5%" height="5%" /> FastNote</center>
+# <div align="center"><img src="./favicon-512x512.png" alt="Fastnote logo" align="center" width="5%" height="5%" /> FastNote </div>
 
-<center>便利贴般方便的快速笔记, 专注于<b>快</b></center>
+<div align="center">
+    <a href="./README.md">English</a> | <a href="./README.zh-cn.md">简体中文</a>
+</div>
 
-## 💡 主要特性
+<center>FastNote is an app focused on <b>convenience</b></center>
 
-- 随开随写: 自定义全局快捷键切换窗口(默认`meta`+`alt`+`x`)
-- 快捷键覆盖: 节约鼠标操作时间
-- 提醒设置: 随手记下，稍后再办
-- 便利功能: 便捷导出，窗口置顶
-- 深色/浅色模式切换
-- 功能简洁，专注于<b>快</b>
+## 💡 Main Features
 
-## 💻 开发状态
+- Instant writing: Customize global shortcut keys to toggle the window (default: `meta`+`alt`+`x`)
+- Keyboard shortcuts: Reduce mouse operation time
+- Reminder settings: Jot down notes and handle them later
+- Convenience features: Easy export, window always on top
+- Dark/Light mode toggle
+- Simple functionality, focused on <b>speed</b>
 
-- ✅ 目前支持`Windows`(`Linux`, `MacOS`开发中, 理论支持)
-- ✅ 基本功能完成
-- 🟡 多语言支持(简体中文/English/...)
+## 💻 Development Status
 
-## 🛠️ 如何开发
+- ✅ Currently supports `Windows` (`Linux` and `MacOS` are under development and theoretically supported)
+- ✅ Basic features completed
+- ✅ Multi-language support (Simplified Chinese / English)
+- 🤔 More Features! issues are welcome!
 
-### 1. 克隆仓库
+## 🛠️ How to Develop
 
-使用`git clone`或下载代码等方式
+### 1. Clone the Repository
 
-### 2. 安装依赖
+Use `git clone` or download the code manually.
 
-使用下面的指令安装依赖:
+### 2. Install Dependencies
+
+Run the following command to install dependencies:
 
 ```bash
 npm install
 ```
 
-### 3. 从开发模式运行
+### Run in Development Mode
 
-使用下面的指令启动开发:
+Start the development server with:
 
 ```bash
 npm run dev
 ```
 
-### 4. 构建发布
+### Build for Release
 
-使用下面的指令发布:
+Use the following commands to build for release:
 
 **Windows**:
 
@@ -49,10 +54,10 @@ npm run dev
 npm run dist:win
 ```
 
-> [!NOTE]
->
-> `package.json`中存在面向其他平台的发布指令，但还未测试过。如果需要构建面向其他平台(Linux/MacOS)的版本，可以运行`dist:linux`或`dist:mac`。如果在其他平台上运行时发现任何问题，欢迎随时提出 issue！
+[!NOTE]
 
-## ❤️ 欢迎贡献
+The package.json file contains build scripts for other platforms, but they have not been tested yet. If you need to build for other platforms (Linux/MacOS), you can run dist:linux or dist:mac. If you encounter any issues when running on other platforms, feel free to open an issue!
 
-如果在开发或使用过程中遇到任何问题，或有任何功能建议，欢迎随时提出 issue 和 Pull Request 哦!
+## ❤️ Contributions Welcome
+
+If you encounter any issues during development or usage, or if you have any feature suggestions, feel free to open an issue or submit a Pull Request!
