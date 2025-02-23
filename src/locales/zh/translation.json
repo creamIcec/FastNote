@@ -30,5 +30,6 @@
   "format_txt": "文本文档",
   "keep_window_on_top": "窗口保持置顶",
   "exit_app": "退出程序",
-  "set_language": "选择你的语言"
+  "set_language": "选择你的语言",
+  "welcome": "欢迎使用~"
 }

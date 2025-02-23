@@ -40,7 +40,7 @@ interface Window {
 
   i18nService: {
     getInitialTranslations: () => any;
-    getAvailableLanguages: () => any;
+    getLanguagesInfo: () => any;
     changeLanguage: (lang: string) => any;
     getCurrentLanguage: () => Promise<string>;
   };

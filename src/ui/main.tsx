@@ -3,13 +3,10 @@ import App from "@/App.tsx";
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { getDefaultTranslations } from "./actions/api";
-import { initI18nClient } from "./configs/i18next.config.client";
+import { LanguageManager } from "./utils/lang";
 
-//初始化i18n客户端
-const i18n = initI18nClient();
-const initialTranslations = await getDefaultTranslations();
-i18n.addResourceBundle("en", "translation", initialTranslations);
+//初始化语言
+LanguageManager.getInstance().initialize();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

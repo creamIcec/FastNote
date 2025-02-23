@@ -12,6 +12,7 @@ import { modifyGlobalBringUpWindowShortcut } from "./glabol-event-handlers.js";
 import { LinkTarget } from "../types.js";
 import { showWindow } from "../actions/window-actions.js";
 import { languageConfig } from "../configs/i18next.config.js";
+import { ConfigManager } from "../io/config-manager.js";
 const logger = getLogger(import.meta.url);
 
 export function registerWindowEventHandlers(window: BrowserWindow) {
@@ -216,24 +217,29 @@ export function registerNotificationEventHandlers(
 //翻译后端事件处理器
 export function registerI18nEventHandlers(i18n: typeof i18next) {
   i18n.on("loaded", (loaded) => {
-    i18n.changeLanguage("en");
+    const userLang = ConfigManager.getInstance().config?.language;
+    i18n.changeLanguage(userLang || languageConfig.fallbackLang);
     i18n.off("loaded");
   });
 
   ipcMain.handle("i18n:getInitialTranslations", () => {
-    return i18n.getResourceBundle("en", "translation");
+    console.log(ConfigManager.getInstance().config!.language);
+    return i18n.getResourceBundle(
+      ConfigManager.getInstance().config!.language,
+      languageConfig.namespace
+    );
   });
 
-  ipcMain.handle("i18n:getLanguages", () => {
+  ipcMain.handle("i18n:getLanguagesInfo", () => {
     return {
-      languages: languageConfig.languages,
-      languageMap: languageConfig.languageMap,
+      ...languageConfig,
+      currentLang: ConfigManager.getInstance().config?.language,
     };
   });
 
   ipcMain.handle("i18n:changeLanguage", async (event, langCode) => {
-    i18n.changeLanguage(langCode);
-    return i18n.getResourceBundle(langCode, "translation");
+    await i18n.changeLanguage(langCode);
+    return i18n.getResourceBundle(langCode, languageConfig.namespace);
   });
 
   ipcMain.handle("i18n:getCurrentLanguage", async () => {

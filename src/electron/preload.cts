@@ -57,7 +57,7 @@ electron.contextBridge.exposeInMainWorld("shortcutService", {
 electron.contextBridge.exposeInMainWorld("i18nService", {
   getInitialTranslations: () =>
     electron.ipcRenderer.invoke("i18n:getInitialTranslations"),
-  getAvailableLanguages: () => electron.ipcRenderer.invoke("i18n:getLanguages"),
+  getLanguagesInfo: () => electron.ipcRenderer.invoke("i18n:getLanguagesInfo"),
   changeLanguage: (lang: string) =>
     electron.ipcRenderer.invoke("i18n:changeLanguage", lang),
   getCurrentLanguage: () =>

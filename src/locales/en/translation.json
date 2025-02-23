@@ -30,5 +30,6 @@
   "format_txt": "plain text",
   "keep_window_on_top": "Always on top",
   "exit_app": "Exit",
-  "set_language": "Select Language"
+  "set_language": "Select Language",
+  "welcome": "Welcome!"
 }

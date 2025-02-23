@@ -1,13 +1,21 @@
 import i18next from "i18next";
-import i18nextBackend from "i18next-node-fs-backend";
+import i18nextFsBackend, { FsBackendOptions } from "i18next-fs-backend";
+
+//from https://stackoverflow.com/questions/46072248/node-js-how-to-detect-user-language
+export function getUserLocale() {
+  const locale = Intl.DateTimeFormat().resolvedOptions().locale;
+  const lang = locale.split("-")[0];
+  return lang;
+}
 
 const config = {
-  fallbackLng: "en",
+  fallbackLang: "en",
   languages: ["en", "zh"],
   languageMap: {
     en: "English",
     zh: "简体中文",
   },
+  namespace: "translation",
 };
 
 const i18nextOptions = {
@@ -20,18 +28,16 @@ const i18nextOptions = {
   interpolation: {
     escapeValue: false,
   },
-
   saveMissing: true,
-  fallbackLng: config.fallbackLng,
+  fallbackLng: config.fallbackLang,
   whitelist: config.languages,
-  debug: true,
   react: {
     wait: false,
   },
 };
 
 export async function initI18n() {
-  i18next.use(i18nextBackend);
+  i18next.use(i18nextFsBackend);
 
   if (!i18next.isInitialized) {
     await i18next.init(i18nextOptions as any);

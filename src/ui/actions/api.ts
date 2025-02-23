@@ -109,15 +109,14 @@ export function unregisterAllOnWindowShowHandler() {
 // 在默认浏览器中打开链接
 export function openInBrowser(target: LinkTarget) {}
 
-// 获取默认语言包
-export async function getDefaultTranslations() {
-  return await window.i18nService.getInitialTranslations();
+// 获取当前语言包
+export async function getCurrentTranslations() {
+  return window.i18nService.getInitialTranslations();
 }
 
-//获取可用语言列表
-export async function getAvailableLanguages() {
-  console.log(await window.i18nService.getAvailableLanguages());
-  return await window.i18nService.getAvailableLanguages();
+//获取语言信息
+export async function getLanguagesInfo() {
+  return await window.i18nService.getLanguagesInfo();
 }
 
 //改变语言

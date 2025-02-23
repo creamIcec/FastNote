@@ -3,29 +3,35 @@ import path from "path";
 import fs from "node:fs";
 import Ajv from "ajv";
 import GetLogger from "../logger.js";
+import { getUserLocale, languageConfig } from "../configs/i18next.config.js";
 const logger = GetLogger(import.meta.url);
 
 export interface Config {
   globalShortcut: string;
+  language: string;
 }
+
+const CONFIG_SCHEMA = {
+  $schema: "http://json-schema.org/draft-07/schema#",
+  type: "object",
+  properties: {
+    globalShortcut: {
+      type: "string",
+      description: "Global Shortcut for bringing up window.",
+    },
+    language: {
+      type: "string",
+      description: "User set language.",
+    },
+  },
+  required: ["globalShortcut"],
+};
 
 export class ConfigManager {
   private configPath: string;
   config: Config | null;
   private ajv;
   private static configManager: ConfigManager;
-  private schema = {
-    $schema: "http://json-schema.org/draft-07/schema#",
-    type: "object",
-    properties: {
-      globalShortcut: {
-        type: "string",
-        description: "Global Shortcut for bringing up window.",
-      },
-    },
-    required: ["globalShortcut"],
-  };
-
   private constructor() {
     this.ajv = new Ajv();
     this.configPath = path.join(app.getPath("userData"), "settings.json");
@@ -47,7 +53,7 @@ export class ConfigManager {
     if (!json) {
       return false;
     }
-    const valid = await this.ajv.validate(this.schema, json);
+    const valid = await this.ajv.validate(CONFIG_SCHEMA, json);
     if (!valid) {
       logger.warn(
         "Config is invalid, restoring default config: ",
@@ -65,8 +71,11 @@ export class ConfigManager {
       if (fs.existsSync(this.configPath)) {
         const data = fs.readFileSync(this.configPath, "utf8");
         const json = JSON.parse(data);
-        if (await this.validateJSON(json)) {
-          return json as Config;
+
+        const normalizedConfig = this.normalizeConfig(json as Partial<Config>);
+
+        if (await this.validateJSON(normalizedConfig)) {
+          return normalizedConfig as Config;
         }
         return this.getDefaultConfig();
       }
@@ -97,6 +106,7 @@ export class ConfigManager {
   private getDefaultConfig(): Config {
     return {
       globalShortcut: "Meta+Alt+X",
+      language: getUserLocale(),
     };
   }
 
@@ -108,5 +118,31 @@ export class ConfigManager {
 
   public static getInstance() {
     return ConfigManager.configManager;
+  }
+
+  //用于兼容: 用默认值填充缺失值/删除多余值
+  private normalizeConfig(config: Partial<Config>): Config {
+    const defaultConfig = this.getDefaultConfig();
+    const normalizedConfig: Config = {
+      globalShortcut: config.globalShortcut || defaultConfig.globalShortcut,
+      language: config.language || defaultConfig.language,
+    };
+
+    const addedKeys = Object.keys(normalizedConfig).filter(
+      (key) => !(key in config)
+    );
+
+    const removedKeys = Object.keys(config).filter(
+      (key) => !(key in normalizedConfig)
+    );
+
+    if (addedKeys.length > 0) {
+      logger.info(`Added missing config keys: ${addedKeys.join(", ")}`);
+    }
+    if (removedKeys.length > 0) {
+      logger.info(`Removed deprecated config keys: ${removedKeys.join(", ")}`);
+    }
+
+    return normalizedConfig;
   }
 }

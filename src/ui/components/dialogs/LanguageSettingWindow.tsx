@@ -1,9 +1,8 @@
-import { getAvailableLanguages, getCurrentLanguage } from "@/actions/api";
+import { getCurrentLanguage, getLanguagesInfo } from "@/actions/api";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   MdElevatedCard,
-  MdFilledButton,
   MdIcon,
   MdIconButton,
   MdList,
@@ -13,6 +12,7 @@ import {
 import DialogAnimationWrapper from "./animator/DialogAnimationWrapper";
 import styles from "./LanguageSettingWindow.module.css";
 import WindowBlockComponentWrapper from "./WindowBlockComponentWrapper";
+import { LanguageManager } from "@/utils/lang";
 
 export default function LanguageSettingWindow({
   setIsLanguageSettingWindowOpen,
@@ -37,7 +37,9 @@ export default function LanguageSettingWindow({
   );
 
   const [availableLanguages, setAvailableLanguages] = useState<any | null>();
-  const [currentLanguage, setCurrentLanguage] = useState("en");
+  const [currentLanguage, setCurrentLanguage] = useState(
+    LanguageManager.getInstance().getFallbackLang()
+  );
 
   useEffect(() => {
     document.addEventListener("keydown", handleOnQuit);
@@ -45,8 +47,8 @@ export default function LanguageSettingWindow({
   }, []);
 
   useEffect(() => {
-    const availableLanguages = getAvailableLanguages();
-    availableLanguages.then((value) => {
+    const availableLanguages = getLanguagesInfo();
+    availableLanguages.then((value: any) => {
       setAvailableLanguages(value.languageMap);
     });
   }, []);
@@ -57,7 +59,6 @@ export default function LanguageSettingWindow({
       setCurrentLanguage(lang);
     };
     fetchLanguage();
-    console.log("Changed");
   }, [currentLanguage]);
 
   const { t, i18n } = useTranslation();

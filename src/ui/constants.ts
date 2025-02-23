@@ -3,5 +3,5 @@ export const DEFAULT_NEW_NOTE_CONTENT =
 export const DEFAULT_NEW_NOTE_CONTENT_TRANSLATION_KEY = "greeting";
 export const SAVE_NOTE_INTERVAL = 5000; //保存笔记的间隔, ms
 export const INDICATOR_REFRESH_INTERVAL = 2000; //保存指示器的刷新间隔, ms
-export const DEFAULT_NOTE_TITLE_TRANSLATION_KEY = "default_note_title"; //新建笔记默认标题
+export const DEFAULT_NOTE_TITLE_TRANSLATION_KEY = "welcome"; //新建笔记默认标题
 export const DEFAULT_NOTE_TITLE = "Untitled";

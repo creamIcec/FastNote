@@ -20,6 +20,7 @@ import { useShallow } from "zustand/shallow";
 import styles from "./App.module.css";
 import LanguageSettingWindow from "./components/dialogs/LanguageSettingWindow";
 import i18next from "i18next";
+import { LanguageManager } from "./utils/lang";
 
 function App() {
   const [isOpen] = useSidebarState(useShallow((state) => [state.isOpen]));
@@ -65,8 +66,10 @@ function App() {
 
   const handleLanguageChange = async (lang: string) => {
     const bundle = await changeLanguage(lang);
-    if (!i18next.hasResourceBundle(lang, "translation")) {
-      i18next.addResourceBundle(lang, "translation", bundle);
+    const namespace =
+      LanguageManager.getInstance().getNamespace() || "translation";
+    if (!i18next.hasResourceBundle(lang, namespace)) {
+      i18next.addResourceBundle(lang, namespace, bundle);
     }
     i18next.changeLanguage(lang);
   };

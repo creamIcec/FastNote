@@ -70,6 +70,7 @@ app.on("ready", async () => {
   }
 
   //创建配置管理器
+  //确保在其他所有的最前方:)
   const configManager = await ConfigManager.createConfigManager();
   await configManager.initialize();
 
@@ -104,6 +105,8 @@ app.on("ready", async () => {
 
   //注册i18n语言变化事件触发
   registerI18nEventEmits(i18next, (code) => {
+    configManager.config!.language = code;
+    configManager.saveConfig();
     updateTrayMenu(tray);
   });
 
