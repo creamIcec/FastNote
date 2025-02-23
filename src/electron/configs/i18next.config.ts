@@ -1,5 +1,8 @@
 import i18next from "i18next";
-import i18nextFsBackend, { FsBackendOptions } from "i18next-fs-backend";
+import i18nextFsBackend from "i18next-fs-backend";
+import { isDev } from "../environment-util.js";
+import { app } from "electron";
+import path from "path";
 
 //from https://stackoverflow.com/questions/46072248/node-js-how-to-detect-user-language
 export function getUserLocale() {
@@ -20,8 +23,18 @@ const config = {
 
 const i18nextOptions = {
   backend: {
-    loadPath: "./src/locales/{{lng}}/{{ns}}.json",
-    addPath: "./src/locales/{{lng}}/{{ns}}.missing.json",
+    loadPath: isDev()
+      ? "./src/electron/resources/locales/{{lng}}/{{ns}}.json"
+      : path.join(
+          app.getAppPath(),
+          "/dist-electron/resources/locales/{{lng}}/{{ns}}.json"
+        ),
+    addPath: isDev()
+      ? "./src/electron/resources/locales/{{lng}}/{{ns}}.missing.json"
+      : path.join(
+          app.getAppPath(),
+          "/dist-electron/resources/locales/{{lng}}/{{ns}}.missing.json"
+        ),
     jsonIndent: 2,
   },
 

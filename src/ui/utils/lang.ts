@@ -22,7 +22,9 @@ export class LanguageManager {
   }
 
   public async initialize() {
-    this.fallbackLang = (await this.initLang()).fallbackLang;
+    const langInfo = await this.initLang();
+    this.fallbackLang = langInfo.fallbackLang;
+    console.log(langInfo);
   }
 
   public static getInstance() {
