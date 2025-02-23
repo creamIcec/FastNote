@@ -2,8 +2,17 @@
 
 <div align="center">
     <a href="./README.md">English</a> | <a href="./README.zh-cn.md">简体中文</a>
-    <p>便利贴般方便的快速笔记, 专注于<b>快</b></p>
+    <p>便利贴般方便的快速笔记, 专注于<b>快</b>, <br/> 使用Electron, React 和 Vite 构建，采用Material Design 3设计</p>
 </div>
+
+<div align="center">
+
+  <a href="">[![React][React.js]][React-url]</a>
+  <a href="">[![Electron][Electron]][Electron-url]</a>
+  <a href="">[![Vite][Vite]][Vite-url]</a>
+
+</div>
+
 
 ## 💡 主要特性
 
@@ -60,3 +69,11 @@ npm run dist:win
 ## ❤️ 欢迎贡献
 
 如果在开发或使用过程中遇到任何问题，或有任何功能建议，欢迎随时提出 issue 和 Pull Request 哦!
+
+
+[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React-url]: https://reactjs.org/
+[Electron]: https://img.shields.io/badge/electron-20232A?style=for-the-badge&logo=electron&logocolor=47848F
+[Electron-url]: https://www.electronjs.org/
+[Vite]: https://img.shields.io/badge/vite-20232A?style=for-the-badge&logo=vite&logocolor=646CFF
+[Vite-url]: https://vite.dev/
