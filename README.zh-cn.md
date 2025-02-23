@@ -2,9 +2,8 @@
 
 <div align="center">
     <a href="./README.md">English</a> | <a href="./README.zh-cn.md">简体中文</a>
+    <p>便利贴般方便的快速笔记, 专注于<b>快</b></p>
 </div>
-
-<center>便利贴般方便的快速笔记, 专注于<b>快</b></center>
 
 ## 💡 主要特性
 
@@ -19,7 +18,8 @@
 
 - ✅ 目前支持`Windows`(`Linux`, `MacOS`开发中, 理论支持)
 - ✅ 基本功能完成
-- 🟡 多语言支持(简体中文/English/...)
+- ✅ 多语言支持 (简体中文/英文)
+- 🤔 更多功能开发中! 欢迎提 issue!
 
 ## 🛠️ 如何开发
 

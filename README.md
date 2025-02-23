@@ -2,9 +2,8 @@
 
 <div align="center">
     <a href="./README.md">English</a> | <a href="./README.zh-cn.md">简体中文</a>
+    <p>FastNote is an app focused on <b>convenience</b></p>
 </div>
-
-<center>FastNote is an app focused on <b>convenience</b></center>
 
 ## 💡 Main Features
 
