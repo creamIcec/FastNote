@@ -63,7 +63,7 @@ npm run dist:win
 
 > [!NOTE]
 >
-> The package.json file contains build scripts for other platforms, but they have not been tested yet. If you need to build for other platforms (Linux/MacOS), you can run dist:linux or dist:mac. If you encounter any issues when running on ?other platforms, feel free to open an issue!
+> The package.json file contains build scripts for other platforms, but they have not been tested yet. If you need to build for other platforms (Linux/MacOS), you can run dist:linux or dist:mac. If you encounter any issues when running on other platforms, feel free to open an issue!
 
 ## ❤️ Contributions Welcome
 
