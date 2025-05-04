@@ -22,6 +22,8 @@ import LanguageSettingWindow from "./components/dialogs/LanguageSettingWindow";
 import i18next from "i18next";
 import { LanguageManager } from "./utils/lang";
 
+
+// UI init
 function App() {
   const [isOpen] = useSidebarState(useShallow((state) => [state.isOpen]));
   const [title, setTitle, fetchAndSetPrevTitle] = useTitle(
